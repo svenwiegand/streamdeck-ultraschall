@@ -6,7 +6,9 @@
   "bin": "dist/plugin.js",
   "pkg": {
     "scripts": "node_modules/node-osc/dist/lib/index.js",
-    "targets": ["node18-macos-x64"],
+    "targets": [
+      "node18-macos-x64"
+    ],
     "outputPath": "dist"
   },
   "scripts": {
@@ -27,6 +29,7 @@
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@webpack-cli/generators": "^3.0.1",
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.2",
     "eslint": "^8.29.0",
     "style-loader": "^3.3.1",
@@ -39,6 +42,7 @@
   },
   "dependencies": {
     "node-osc": "^8.0.6",
+    "tslog": "^4.4.4",
     "ws": "^8.11.0"
   }
 }

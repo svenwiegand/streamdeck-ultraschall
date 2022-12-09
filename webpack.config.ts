@@ -2,20 +2,25 @@
 import * as path from "path"
 import * as webpack from "webpack"
 import * as nodeExternals from "webpack-node-externals"
+import * as CopyPlugin from "copy-webpack-plugin"
 
 const isProduction = process.env.NODE_ENV == "production"
 const stylesHandler = "style-loader"
 
 const config: webpack.Configuration = {
     entry: "./src/plugin/plugin.ts",
+    target: "node",
     output: {
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, "dist/com.sven-wiegand.ultraschall.sdPlugin"),
         filename: "plugin.js",
     },
     externals: [nodeExternals()], // required as build fails otherwise as soon as we use node-osc
     plugins: [
-        // Add your plugins here
-        // Learn more about plugins from https://webpack.js.org/configuration/plugins/
+        new CopyPlugin({
+            patterns: [
+                { from: "assets", to: "[path][name][ext]" }
+            ]
+        })
     ],
     module: {
         rules: [
@@ -24,14 +29,6 @@ const config: webpack.Configuration = {
                 loader: "ts-loader",
                 exclude: ["/node_modules/"],
             },
-            {
-                test: /\.css$/i,
-                use: [stylesHandler,"css-loader"],
-            },
-            {
-                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-                type: "asset",
-            },
 
             // Add your rules for custom modules here
             // Learn more about loaders from https://webpack.js.org/loaders/
@@ -39,6 +36,9 @@ const config: webpack.Configuration = {
     },
     resolve: {
         extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
+        fallback: {
+            "fs": false,
+        },
     },
 }
 

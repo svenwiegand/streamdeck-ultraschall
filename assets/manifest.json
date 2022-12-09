@@ -2,7 +2,7 @@
   "Actions": [
     {
       "Icon": "images/action1.icon",
-      "Name": "My first action",
+      "Name": "Svens action",
       "States": [
         {
           "Image": "images/action1.key",
@@ -12,15 +12,14 @@
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "",
-      "UUID": "com.sven-wiegand.ultraschall"
+      "UUID": "com.sven-wiegand.ultraschall.sven"
     }
   ],
   "SDKVersion": 2,
   "Author": "Sven Wiegand",
-  "CodePath": "plugin.html",
-  "PropertyInspectorPath": "propertyinspector.html",
-  "Name": "Ultraschall",
-  "Description": "Provides actions for recording podcasts with Ultrashall.fm",
+  "CodePath": "streamdeck-ultraschall",
+  "Name": "Ultraschall (nodejs)",
+  "Description": "Provides actions for recording podcasts with Ultraschall.fm",
   "Icon": "images/pluginIcon",
   "Version": "0.0.0-development",
   "OS": [
