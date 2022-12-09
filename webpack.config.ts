@@ -1,6 +1,7 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 import * as path from "path"
 import * as webpack from "webpack"
+import * as nodeExternals from "webpack-node-externals"
 
 const isProduction = process.env.NODE_ENV == "production"
 const stylesHandler = "style-loader"
@@ -11,6 +12,7 @@ const config: webpack.Configuration = {
         path: path.resolve(__dirname, "dist"),
         filename: "plugin.js",
     },
+    externals: [nodeExternals()], // required as build fails otherwise as soon as we use node-osc
     plugins: [
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
