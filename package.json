@@ -1,8 +1,14 @@
 {
-  "name": "my-webpack-project",
+  "name": "streamdeck-ultraschall",
   "version": "1.0.0",
   "description": "My webpack project",
-  "main": "index.js",
+  "main": "plugin.js",
+  "bin": "dist/plugin.js",
+  "pkg": {
+    "scripts": "node_modules/node-osc/dist/lib/index.js",
+    "targets": ["node18-macos-x64"],
+    "outputPath": "dist"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode=production --node-env=production",
