@@ -17,7 +17,7 @@
   ],
   "SDKVersion": 2,
   "Author": "Sven Wiegand",
-  "CodePath": "streamdeck-ultraschall",
+  "CodePath": "dev.sh",
   "Name": "Ultraschall (nodejs)",
   "Description": "Provides actions for recording podcasts with Ultraschall.fm",
   "Icon": "images/pluginIcon",
