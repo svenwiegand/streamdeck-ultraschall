@@ -18,6 +18,7 @@
   "SDKVersion": 2,
   "Author": "Sven Wiegand",
   "CodePath": "dev.sh",
+  "PropertyInspectorPath": "inspector.html",
   "Name": "Ultraschall (nodejs)",
   "Description": "Provides actions for recording podcasts with Ultraschall.fm",
   "Icon": "images/pluginIcon",
