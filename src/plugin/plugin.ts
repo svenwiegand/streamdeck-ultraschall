@@ -14,6 +14,7 @@ const registration = {
 }
 console.log(registration)
 
+const osc = new Client("127.0.0.1", 8000)
 const websocket = new ws.WebSocket(`ws://localhost:${registration.port}`)
 websocket.onopen = () => {
     const payload = {
@@ -23,11 +24,9 @@ websocket.onopen = () => {
     websocket.send(JSON.stringify(payload))
 }
 websocket.onmessage = event => {
-    console.log(event.data)
+    const msg = JSON.parse(event.data.toString())
+    console.log(msg)
+    if (msg.event === "keyUp") {
+        osc.send("t/play")
+    }
 }
-/*
-const osc = new Client("127.0.0.1", 8000)
-osc.send("t/play", () => {
-    osc.close()
-})
- */
