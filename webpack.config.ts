@@ -9,6 +9,7 @@ const stylesHandler = "style-loader"
 
 const config: webpack.Configuration = {
     entry: "./src/plugin/plugin.ts",
+    devtool: "inline-source-map",
     target: "node",
     output: {
         path: path.resolve(__dirname, "dist/com.sven-wiegand.ultraschall.sdPlugin"),
