@@ -1,17 +1,16 @@
-// Generated using webpack-cli https://github.com/webpack/webpack-cli
 import * as path from "path"
 import * as webpack from "webpack"
 import * as nodeExternals from "webpack-node-externals"
 import * as CopyPlugin from "copy-webpack-plugin"
 
 const isProduction = process.env.NODE_ENV == "production"
+const outputPath = "dist/de.sven-wiegand.ultraschall.sdPlugin"
 
 const pluginConfig: webpack.Configuration = {
     entry: "./src/plugin/plugin.ts",
-    devtool: "inline-source-map",
     target: "node",
     output: {
-        path: path.resolve(__dirname, "dist/de.sven-wiegand.ultraschall.sdPlugin"),
+        path: path.resolve(__dirname, outputPath),
         filename: "plugin.js",
     },
     externals: [nodeExternals()], // required as build fails otherwise as soon as we use node-osc
@@ -45,12 +44,11 @@ const pluginConfig: webpack.Configuration = {
 
 const inspectorConfig: webpack.Configuration = {
     entry: "./src/inspector/inspector.ts",
-    devtool: "inline-source-map",
     target: "web",
     output: {
         library: "connectElgatoStreamDeckSocket",
         libraryExport: "default",
-        path: path.resolve(__dirname, "dist/de.sven-wiegand.ultraschall.sdPlugin/js"),
+        path: path.resolve(__dirname, outputPath),
         filename: "inspector.js",
     },
     plugins: [],
@@ -75,13 +73,18 @@ const inspectorConfig: webpack.Configuration = {
     }
 }
 
+const configs = [pluginConfig, inspectorConfig]
+const adjustConfig = (adjust: (config: webpack.Configuration) => void) => configs.forEach(adjust)
 module.exports = () => {
     if (isProduction) {
-        pluginConfig.mode = "production"
-        inspectorConfig.mode = "production"
+        adjustConfig(config => {
+            config.mode = "production"
+        })
     } else {
-        pluginConfig.mode = "development"
-        inspectorConfig.mode = "development"
+        adjustConfig(config => {
+            config.mode = "development"
+            config.devtool = "inline-source-map"
+        })
     }
-    return [pluginConfig, inspectorConfig]
+    return configs
 }
