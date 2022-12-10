@@ -1,7 +1,6 @@
 import {Client} from "node-osc"
 import * as assert from "assert"
-import {Plugin} from "../common/streamdeck/Plugin"
-import {ActionKeyEvent} from "../common/streamdeck/events/receive"
+import {Plugin} from "../common/streamdeck/plugin/Plugin"
 
 console.log(new Date())
 process.argv.forEach(arg => console.log(arg))

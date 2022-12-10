@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 import {propertyInspector} from "./PropertyInspector"
-import {PropertyInspector} from "../common/streamdeck/PropertyInspector"
+import {PropertyInspector} from "../common/streamdeck/inspector/PropertyInspector"
 
 function render(name: string | undefined, onNameChange: (name: string) => void) {
     ReactDOM.render(React.createElement(propertyInspector, { name, onNameChange }), document.getElementById("root"))

@@ -1,11 +1,4 @@
-export interface Coordinates {
-    column: number
-    row: number
-}
-
-export interface ConnectionEvent extends Event {
-    event: "connected" | "disconnected"
-}
+import {ActionReceiveEvent, CommonReceiveEvent, Coordinates} from "../common/events"
 
 export interface ApplicationEvent extends Event {
     event: "applicationDidLaunch" | "applicationDidTerminate"
@@ -25,12 +18,6 @@ export interface DeviceDidConnect extends Event {
         }
         type: number
     }
-}
-
-export interface ActionReceiveEvent extends Event {
-    action: string
-    context: string
-    device: string
 }
 
 export interface ActionKeyEvent<Settings> extends ActionReceiveEvent {
@@ -63,12 +50,10 @@ export interface ActionWillAppear<Settings> extends ActionReceiveEvent {
     }
 }
 
-export type PluginReceiveEvent<Settings> =
-    ConnectionEvent |
+export type PluginReceiveEvent<Settings extends object> =
+    CommonReceiveEvent<Settings> |
     ApplicationEvent |
     DeviceDidConnect |
     ActionKeyEvent<Settings> |
     ActionTitleParametersDidChange<Settings> |
     ActionWillAppear<Settings>
-export type PropertyInspectorEvent =
-    ConnectionEvent

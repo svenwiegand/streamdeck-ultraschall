@@ -1,5 +1,5 @@
 import { EventEmitter } from "eventemitter3"
-import { Event, EventHandler } from "./events/common"
+import { Event, EventHandler } from "./events"
 
 export abstract class AbstractStreamDeckClient<ReceiveEvent extends Event> {
     private websockt: WebSocket

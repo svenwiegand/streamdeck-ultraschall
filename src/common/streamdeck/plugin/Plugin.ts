@@ -1,5 +1,5 @@
-import {AbstractStreamDeckClient} from "./AbstractStreamDeckClient"
-import {PluginReceiveEvent} from "./events/receive"
+import {AbstractStreamDeckClient} from "../common/AbstractStreamDeckClient"
+import {PluginReceiveEvent} from "./events"
 import * as ws from "ws"
 
 export class Plugin<Settings extends object> extends AbstractStreamDeckClient<PluginReceiveEvent<Settings>> {
