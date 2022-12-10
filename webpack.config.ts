@@ -11,7 +11,7 @@ const pluginConfig: webpack.Configuration = {
     devtool: "inline-source-map",
     target: "node",
     output: {
-        path: path.resolve(__dirname, "dist/com.sven-wiegand.ultraschall.sdPlugin"),
+        path: path.resolve(__dirname, "dist/de.sven-wiegand.ultraschall.sdPlugin"),
         filename: "plugin.js",
     },
     externals: [nodeExternals()], // required as build fails otherwise as soon as we use node-osc
@@ -50,7 +50,7 @@ const inspectorConfig: webpack.Configuration = {
     output: {
         library: "connectElgatoStreamDeckSocket",
         libraryExport: "default",
-        path: path.resolve(__dirname, "dist/com.sven-wiegand.ultraschall.sdPlugin/js"),
+        path: path.resolve(__dirname, "dist/de.sven-wiegand.ultraschall.sdPlugin/js"),
         filename: "inspector.js",
     },
     plugins: [],
