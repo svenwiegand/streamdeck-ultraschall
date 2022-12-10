@@ -1,18 +1,18 @@
 {
   "name": "streamdeck-ultraschall",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "A streamdeck plugin to make recording podcasts with Ultraschall more comfortable",
+  "author": "Sven Wiegand",
+  "license": "MIT",
+  "homepage": "https://github.com/svenwiegand/streamdeck-ultraschall",
+  "keywords": [],
   "main": "plugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=production --node-env=production",
-    "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --node-env=production",
-    "watch": "webpack --watch"
+    "build": "webpack --mode=development",
+    "release": "webpack --mode=production --node-env=production",
+    "watch": "webpack --mode=development --watch"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.11.12",
     "@types/node-osc": "^6.0.0",
