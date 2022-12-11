@@ -1,7 +1,9 @@
 import { EventEmitter } from "eventemitter3"
-import { Event, EventHandler } from "./events"
+import { Event, EventHandler, SendEventBase } from "./events"
 
-export abstract class AbstractStreamDeckClient<ReceiveEvent extends Event> {
+export abstract class AbstractStreamDeckClient<
+    ReceiveEvent extends Event,
+> {
     private websockt: WebSocket
     protected eventEmitter: EventEmitter<string>
 
@@ -18,6 +20,7 @@ export abstract class AbstractStreamDeckClient<ReceiveEvent extends Event> {
         websocket.onmessage = (msg: MessageEvent<ReceiveEvent>) => {
             const event = JSON.parse(msg.data.toString())
             console.debug(event)
+            this.onEvent(event)
             this.eventEmitter.emit(event.event, event)
         }
     }
@@ -27,11 +30,16 @@ export abstract class AbstractStreamDeckClient<ReceiveEvent extends Event> {
         this.eventEmitter.emit("disconnected")
     }
 
+    protected onEvent(event: ReceiveEvent): void {
+        // can be overriden by derived classes – TODO: maybe we can remove this
+    }
+
     on<E extends ReceiveEvent, EName extends E["event"]>(event: EName, handle: EventHandler<E>) {
         this.eventEmitter.on(event, handle)
     }
 
-    sendEvent<E>(event: E) {
-        this.websockt.send(JSON.stringify(event))
+    sendEvent<E extends SendEventBase>(event: E) {
+        const json = JSON.stringify(event)
+        this.websockt.send(json)
     }
 }

@@ -11,13 +11,13 @@ export interface Coordinates {
     row: number
 }
 
-export interface ActionReceiveEvent extends Event {
+export interface ActionReceiveEventBase extends Event {
     action: string
     context: string
     device: string
 }
 
-export interface DidReceiveSettingsEvent<Settings extends object> extends ActionReceiveEvent {
+export interface DidReceiveSettingsEvent<Settings extends object> extends ActionReceiveEventBase {
     event: "didReceiveSettings"
     payload: {
         settings: Settings
@@ -26,8 +26,21 @@ export interface DidReceiveSettingsEvent<Settings extends object> extends Action
     }
 }
 
-export type CommonReceiveEvent<Settings extends object> =
-    ConnectionEvent |
+export type CommonReceiveEvent =
+    ConnectionEvent
+export type CommonActionReceiveEvent<Settings extends object> =
     DidReceiveSettingsEvent<Settings>
 
 export type EventHandler<E extends Event> = (e: E) => void
+
+export interface SendEventBase extends Event {
+    context: string
+}
+
+export interface SetSettingsEvent<Settings extends object> extends SendEventBase {
+    event: "setSettings" | "setGlobalSettings"
+    payload: Settings
+}
+
+export type CommonSendEvent<Settings extends object> =
+    SetSettingsEvent<Settings>

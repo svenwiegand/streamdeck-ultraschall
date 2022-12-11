@@ -13,7 +13,7 @@ const pluginConfig: webpack.Configuration = {
         path: path.resolve(__dirname, outputPath),
         filename: "plugin.js",
     },
-    externals: [nodeExternals()], // required as build fails otherwise as soon as we use node-osc
+    externals: [nodeExternals()],
     plugins: [
         new CopyPlugin({
             patterns: [

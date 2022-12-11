@@ -1,10 +1,24 @@
 {
   "compilerOptions": {
-    "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
     "allowJs": true,
     "jsx": "react-jsx",
-    "sourceMap": true
+    "sourceMap": true,
+
+    "declaration": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": true
   }
 }

@@ -1,4 +1,11 @@
-import {ActionReceiveEvent, CommonReceiveEvent, Coordinates} from "../common/events"
+import {
+    ActionReceiveEventBase,
+    CommonActionReceiveEvent,
+    CommonReceiveEvent,
+    Coordinates,
+    CommonSendEvent,
+    Event, SendEventBase
+} from "../common/events"
 
 export interface ApplicationEvent extends Event {
     event: "applicationDidLaunch" | "applicationDidTerminate"
@@ -20,7 +27,7 @@ export interface DeviceDidConnect extends Event {
     }
 }
 
-export interface ActionKeyEvent<Settings> extends ActionReceiveEvent {
+export interface ActionKeyEvent<Settings> extends ActionReceiveEventBase {
     event: "keyDown" | "keyUp"
     payload: {
         coordinates: Coordinates
@@ -29,7 +36,7 @@ export interface ActionKeyEvent<Settings> extends ActionReceiveEvent {
     }
 }
 
-export interface ActionTitleParametersDidChange<Settings> extends ActionReceiveEvent {
+export interface ActionTitleParametersDidChangeEvent<Settings> extends ActionReceiveEventBase {
     event: "titleParametersDidChange"
     payload: {
         coordinates: Coordinates
@@ -40,20 +47,53 @@ export interface ActionTitleParametersDidChange<Settings> extends ActionReceiveE
     }
 }
 
-export interface ActionWillAppear<Settings> extends ActionReceiveEvent {
-    event: "willAppear"
+export interface ActionWillAppearEvent<Settings> extends ActionReceiveEventBase {
+    event: "willAppear" | "willDisappear"
     payload: {
         controller: string
         coordinates: Coordinates
+        state: string
         isInMultiAction: boolean
         settings: Settings
     }
 }
 
-export type PluginReceiveEvent<Settings extends object> =
-    CommonReceiveEvent<Settings> |
-    ApplicationEvent |
-    DeviceDidConnect |
+export type ActionReceiveEvent<Settings extends object = object> =
+    CommonActionReceiveEvent<Settings> |
     ActionKeyEvent<Settings> |
-    ActionTitleParametersDidChange<Settings> |
-    ActionWillAppear<Settings>
+    ActionTitleParametersDidChangeEvent<Settings> |
+    ActionWillAppearEvent<Settings>
+export type ReceiveEvent =
+    ActionReceiveEvent<object> |
+    CommonReceiveEvent |
+    ApplicationEvent |
+    DeviceDidConnect
+
+
+export interface SetTitleEvent extends SendEventBase {
+    event: "setTitle"
+    payload: {
+        title: string
+        target: "software" | "hardware" | "both"
+        state: number
+    }
+}
+
+export type SendEvent<Settings extends object> =
+    CommonSendEvent<Settings> |
+    SetTitleEvent
+
+export const actionReceiveEventNames: ActionReceiveEvent<object>["event"][] = [
+    "didReceiveSettings",
+    "keyDown",
+    "keyUp",
+    "willAppear",
+    "willDisappear",
+    "titleParametersDidChange",
+]
+
+export function isActionReceiveEvent<
+    Settings extends object = object
+>(event: Event): event is ActionReceiveEvent<Settings> {
+    return (actionReceiveEventNames as string[]).includes(event.event)
+}

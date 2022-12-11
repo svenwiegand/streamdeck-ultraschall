@@ -1,4 +1,6 @@
-import {CommonReceiveEvent} from "../common/events"
+import {CommonReceiveEvent, CommonSendEvent} from "../common/events"
 
-export type PropertyInspectorReceiveEvent<Settings extends object> =
-    CommonReceiveEvent<Settings>
+export type ReceiveEvent =
+    CommonReceiveEvent
+export type SendEvent<Settings extends object> =
+    CommonSendEvent<Settings>
