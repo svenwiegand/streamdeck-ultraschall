@@ -5,6 +5,11 @@ export interface UDPPortOptions {
     remoteAddress?: string
     metadata?: boolean
 }
+
+export interface Error {
+    message: string
+}
+
 export interface TypedArgument {
     type: string;
     value: boolean | number | string;
@@ -20,6 +25,7 @@ export interface UDPPort {
     close()
     send(msg: Message)
     on(event: "ready", onReady: () => void)
+    on(event: "error", onError: (error: Error) => void)
     on(event: "message", onMessage: (msg: Message) => void)
 }
 

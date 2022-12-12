@@ -1,5 +1,5 @@
 //import {Client, Server, Message, MessageLike, ArgumentType} from "node-osc"
-import {createUDPPort, Message, UDPPort} from "./typedOsc"
+import {ArgumentType, createUDPPort, Message, UDPPort} from "./typedOsc"
 import {EventEmitter} from "eventemitter3"
 
 export class Osc {
@@ -18,6 +18,10 @@ export class Osc {
             this.port = port
             console.log(`Listening for OSC on ${pluginHost}:${pluginPort}`)
         })
+        port.on("error", (error) => {
+            console.error(`OSC error ${error.message}`)
+            this.port = undefined
+        })
         port.on("message", (msg) => {
             this.emitter.emit(msg.address, msg)
         })
@@ -29,8 +33,8 @@ export class Osc {
         this.port = undefined
     }
 
-    send(msg: Message) {
-        this.port?.send(msg)
+    send(address: string, ...args: ArgumentType[]) {
+        this.port?.send({ address, args })
     }
 
     onMessage(address: string, handle: (msg: Message) => void) {

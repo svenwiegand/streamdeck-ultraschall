@@ -15,7 +15,6 @@ export class TransportAction extends Action<Settings> {
         // { address: '/time', args: [ 13.763957977294922 ] }
         // { address: '/time/str', args: [ '0:13.763' ] }
         osc.onMessage("/time/str", (msg) => {
-            console.log(msg.args?.[0])
             this.sendEventToAllInstances({
                 event: "setTitle",
                 context: "",
@@ -44,7 +43,7 @@ export class TransportAction extends Action<Settings> {
                 }
                 break
             case "keyDown":
-                this.osc.send({address: "t/play"})
+                this.osc.send("/play")
                 break
             default:
         }
