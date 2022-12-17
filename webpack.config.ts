@@ -86,5 +86,12 @@ module.exports = () => {
             config.devtool = "inline-source-map"
         })
     }
+    adjustConfig(config => {
+        if (config.plugins) {
+            config.plugins.push(new webpack.DefinePlugin({
+                __mode__: JSON.stringify(config.mode)
+            }))
+        }
+    })
     return configs
 }

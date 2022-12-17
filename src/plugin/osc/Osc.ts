@@ -23,6 +23,7 @@ export class Osc {
             this.port = undefined
         })
         port.on("message", (msg) => {
+            console.debug(msg)
             this.emitter.emit(msg.address, msg)
         })
         port.open()
