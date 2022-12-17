@@ -7,7 +7,7 @@ export class Plugin extends AbstractStreamDeckClient<ReceiveEvent> {
     protected readonly actions = new Map<string, Action>()
 
     public constructor(port: number, event: string, uuid: string) {
-        super(event, uuid, new ws.WebSocket(`ws://localhost:${port}`) as unknown as WebSocket)
+        super(event, uuid, new ws.WebSocket(`ws://127.0.0.1:${port}`) as unknown as WebSocket)
     }
 
     registerAction(...actions: Action[]) {
