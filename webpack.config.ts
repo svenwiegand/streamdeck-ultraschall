@@ -26,7 +26,11 @@ const pluginConfig: webpack.Configuration = {
             {
                 test: /\.(ts|tsx)$/i,
                 loader: "ts-loader",
-                include: [path.join(__dirname, 'src/plugin/'), path.join(__dirname, 'src/common/')],
+                include: [
+                    path.join(__dirname, 'src/common/'),
+                    path.join(__dirname, 'src/plugin/'),
+                    path.join(__dirname, 'src/streamdeck/'),
+                ],
                 exclude: ["/node_modules/"],
             },
 
@@ -57,7 +61,11 @@ const inspectorConfig: webpack.Configuration = {
             {
                 test: /\.(ts|tsx)$/i,
                 loader: "ts-loader",
-                include: [path.join(__dirname, 'src/inspector/'), path.join(__dirname, 'src/common/')],
+                include: [
+                    path.join(__dirname, 'src/common/'),
+                    path.join(__dirname, 'src/inspector/'),
+                    path.join(__dirname, 'src/streamdeck/'),
+                ],
                 exclude: ["/node_modules/"],
             },
 

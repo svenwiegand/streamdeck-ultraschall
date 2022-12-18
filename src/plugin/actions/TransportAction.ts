@@ -1,5 +1,5 @@
-import {PluginAction} from "../../common/streamdeck/plugin/PluginAction"
-import {ActionReceiveEvent} from "../../common/streamdeck/plugin/events"
+import {PluginAction} from "../../streamdeck/plugin/PluginAction"
+import {ActionReceiveEvent} from "../../streamdeck/plugin/events"
 import {Osc} from "../osc/Osc"
 import {action} from "../../common/action"
 

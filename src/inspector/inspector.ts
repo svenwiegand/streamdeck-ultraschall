@@ -1,10 +1,10 @@
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 import {propertyInspector} from "./PropertyInspector"
-import {PropertyInspector} from "../common/streamdeck/inspector/PropertyInspector"
+import {PropertyInspector} from "../streamdeck/inspector/PropertyInspector"
 import {initLogging} from "../common/logging"
-import {SimpleActionInspector} from "../common/streamdeck/inspector/ActionInspector"
-import {StreamdeckClient} from "../common/streamdeck/common/StreamdeckClient"
+import {SimpleActionInspector} from "../streamdeck/inspector/ActionInspector"
+import {StreamdeckClient} from "../streamdeck/common/StreamdeckClient"
 import {action} from "../common/action"
 
 function render(name: string | undefined, onNameChange: (name: string) => void) {

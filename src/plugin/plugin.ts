@@ -1,5 +1,5 @@
 import * as assert from "assert"
-import {Plugin} from "../common/streamdeck/plugin/Plugin"
+import {Plugin} from "../streamdeck/plugin/Plugin"
 import {TransportAction} from "./actions/TransportAction"
 import {Osc} from "./osc/Osc"
 import {initLogging} from "../common/logging"

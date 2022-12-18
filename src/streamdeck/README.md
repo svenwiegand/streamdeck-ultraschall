@@ -1,0 +1,1 @@
+This is a generic TypeScript abstraction layer for the [streamdeck SDK](https://developer.elgato.com/documentation/). This could be moved to it's own independent repository. 
