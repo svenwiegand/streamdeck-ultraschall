@@ -26,7 +26,7 @@ export class PropertyInspector extends
         console.log(`Created PropertyInspector for action ${this.actionInfo.action}`)
     }
 
-    registerInspector(...inspectors: ActionInspector<ReceiveEvent<object>>[]): void {
+    registerInspector(...inspectors: ActionInspector<object>[]): void {
         inspectors.forEach(inspector => {
             if (inspector.uuid === this.actionInfo.action) {
                 this.inspector = inspector

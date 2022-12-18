@@ -1,13 +1,11 @@
 import {Osc} from "../osc/Osc"
 import {PluginAction, SimplePluginAction} from "../../streamdeck/plugin/PluginAction"
-import {actionId} from "../../common/action-id"
 import {DidReceiveSettingsEvent} from "../../streamdeck/common/events"
+import {actionId, Settings} from "../../common/actions/transport"
 
-interface Settings {
-    name?: string
-}
+type Action = PluginAction<Settings>
 
-function onDidReceiveSettings(event: DidReceiveSettingsEvent<Settings>, action: PluginAction<Settings>) {
+function onDidReceiveSettings(event: DidReceiveSettingsEvent<Settings>, action: Action) {
     action.sendEvent({
         event: "setTitle",
         context: event.context,
@@ -23,7 +21,7 @@ function toggleRecord(osc: Osc) {
     osc.send("/play")
 }
 
-function onNewTimecode(timecode: string, action: PluginAction<Settings>) {
+function onNewTimecode(timecode: string, action: Action) {
     action.sendEventToAllInstances({
         event: "setTitle",
         payload: {
@@ -35,7 +33,7 @@ function onNewTimecode(timecode: string, action: PluginAction<Settings>) {
 }
 
 export function transportAction(osc: Osc) {
-    const action = new SimplePluginAction<Settings>(actionId.transport, (event, action) => {
+    const action = new SimplePluginAction<Settings>(actionId, (event, action) => {
         switch (event.event) {
             case "didReceiveSettings": return onDidReceiveSettings(event, action)
             case "keyDown": return toggleRecord(osc)
