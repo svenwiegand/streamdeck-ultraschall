@@ -1,18 +1,19 @@
 import {Event, SendEventBase} from "./events"
 import {StreamdeckClient} from "./StreamdeckClient"
 
-export interface Action<ReceiveEvent extends Event> {
+export interface Action<ReceiveEvent extends Event, SendEvent extends SendEventBase> {
     readonly uuid: string
-    client: StreamdeckClient | undefined
+    client: StreamdeckClient<SendEvent> | undefined
     emitReceiveEvent(event: ReceiveEvent): void
+    sendEvent(event: SendEvent): void
 }
 
 export abstract class AbstractAction<
     ReceiveEvent extends Event,
     SendEvent extends SendEventBase,
-> implements Action<ReceiveEvent> {
+> implements Action<ReceiveEvent, SendEvent> {
     public readonly uuid: string
-    public client: StreamdeckClient | undefined
+    public client: StreamdeckClient<SendEvent> | undefined
 
     protected constructor(uuid: string) {
         this.uuid = uuid
@@ -30,7 +31,7 @@ export abstract class AbstractAction<
      */
     protected abstract onEvent(event: ReceiveEvent): void
 
-    protected sendEvent(event: SendEvent) {
+    sendEvent(event: SendEvent) {
         this.client?.sendEvent(event)
     }
 }

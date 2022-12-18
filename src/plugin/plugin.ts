@@ -1,8 +1,8 @@
 import * as assert from "assert"
 import {Plugin} from "../streamdeck/plugin/Plugin"
-import {TransportAction} from "./actions/TransportAction"
 import {Osc} from "./osc/Osc"
 import {initLogging} from "../common/logging"
+import {transportAction} from "./actions/transport"
 
 initLogging()
 console.log(new Date())
@@ -26,4 +26,4 @@ plugin.on("applicationDidTerminate", () => {
     osc.close()
 })
 
-plugin.registerAction(new TransportAction(osc))
+plugin.registerAction(transportAction(osc))

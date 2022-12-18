@@ -1,12 +1,15 @@
 import {EventEmitter} from "eventemitter3"
 import {Event, EventHandler, SendEventBase} from "./events"
 
-export interface StreamdeckClient {
+export interface StreamdeckClient<SendEvent extends SendEventBase> {
     readonly uuid: string
-    sendEvent<E extends SendEventBase>(event: E): void
+    sendEvent(event: SendEvent): void
 }
 
-export abstract class AbstractStreamdeckClient<ReceiveEvent extends Event> implements StreamdeckClient {
+export abstract class AbstractStreamdeckClient<
+    ReceiveEvent extends Event,
+    SendEvent extends SendEventBase
+> implements StreamdeckClient<SendEvent> {
     public readonly uuid: string
     private readonly websocket: WebSocket
     protected readonly eventEmitter: EventEmitter<string>

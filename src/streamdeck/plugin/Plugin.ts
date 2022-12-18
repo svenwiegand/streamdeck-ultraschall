@@ -1,10 +1,10 @@
 import {AbstractStreamdeckClient} from "../common/StreamdeckClient"
-import {ReceiveEvent} from "./events"
+import {ReceiveEvent, SendEvent} from "./events"
 import * as ws from "ws"
 import {PluginAction} from "./PluginAction"
 import {isActionReceiveEvent} from "../common/events"
 
-export class Plugin extends AbstractStreamdeckClient<ReceiveEvent> {
+export class Plugin extends AbstractStreamdeckClient<ReceiveEvent<object>, SendEvent<object>> {
     protected readonly actions = new Map<string, PluginAction>()
 
     public constructor(port: number, event: string, uuid: string) {
@@ -23,7 +23,7 @@ export class Plugin extends AbstractStreamdeckClient<ReceiveEvent> {
         })
     }
 
-    protected onEvent(event: ReceiveEvent): void {
+    protected onEvent(event: ReceiveEvent<object>): void {
         if (isActionReceiveEvent(event)) {
             const action = this.actions.get(event.action)
             action?.emitReceiveEvent(event)

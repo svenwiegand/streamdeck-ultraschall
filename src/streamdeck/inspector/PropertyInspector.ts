@@ -1,5 +1,5 @@
 import {AbstractStreamdeckClient} from "../common/StreamdeckClient"
-import {ReceiveEvent} from "./events"
+import {ReceiveEvent, SendEvent} from "./events"
 import {ActionInspector} from "./ActionInspector"
 import {Coordinates, isActionReceiveEvent} from "../common/events"
 
@@ -14,7 +14,7 @@ export interface ActionInfo {
 }
 
 export class PropertyInspector extends
-    AbstractStreamdeckClient<ReceiveEvent<object>> {
+    AbstractStreamdeckClient<ReceiveEvent<object>, SendEvent<object>> {
     protected readonly actionInfo: ActionInfo
     protected connected = false
     protected inspector?: ActionInspector<object>

@@ -6,7 +6,7 @@ export abstract class PluginAction<Settings extends object = object> extends
 {
     private contextSettings = new Map<string, Settings>()
 
-    public emitReceiveEvent(event: ActionReceiveEvent<Settings>) {
+    emitReceiveEvent(event: ActionReceiveEvent<Settings>) {
         switch (event.event) {
             case "didReceiveSettings":
             case "willAppear":
@@ -18,13 +18,29 @@ export abstract class PluginAction<Settings extends object = object> extends
         super.emitReceiveEvent(event)
     }
 
-    protected sendEventToAllInstances<
-        E extends SendEvent<Settings>
+    sendEventToAllInstances<
+        E extends Omit<SendEvent<Settings>, "context">
     >(event: E, filter: (settings: Settings, context: string) => boolean = () => true) {
         this.contextSettings.forEach((settings, context) => {
             if (filter(settings, context)) {
-                this.sendEvent({...event, context})
+                this.sendEvent({...event, context} as SendEvent<Settings>)
             }
         })
+    }
+}
+
+export type EventHandler<Settings extends object> =
+    (event: ActionReceiveEvent<Settings>, action: PluginAction<Settings>) => void
+
+export class SimplePluginAction<Settings extends object> extends PluginAction<Settings> {
+    private readonly eventHandler: EventHandler<Settings>
+
+    constructor(uuid: string, eventHandler: EventHandler<Settings>) {
+        super(uuid)
+        this.eventHandler = eventHandler
+    }
+
+    protected onEvent(event: ActionReceiveEvent<Settings>): void {
+        this.eventHandler?.(event, this)
     }
 }

@@ -58,13 +58,13 @@ export interface ActionWillAppearEvent<Settings> extends ActionReceiveEventBase 
     }
 }
 
-export type ActionReceiveEvent<Settings extends object = object> =
+export type ActionReceiveEvent<Settings extends object> =
     CommonActionReceiveEvent<Settings> |
     ActionKeyEvent<Settings> |
     ActionTitleParametersDidChangeEvent<Settings> |
     ActionWillAppearEvent<Settings>
-export type ReceiveEvent =
-    ActionReceiveEvent<object> |
+export type ReceiveEvent<Settings extends object> =
+    ActionReceiveEvent<Settings> |
     CommonReceiveEvent |
     ApplicationEvent |
     DeviceDidConnect
