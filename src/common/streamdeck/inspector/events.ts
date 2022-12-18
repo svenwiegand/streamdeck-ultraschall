@@ -1,6 +1,8 @@
-import {CommonReceiveEvent, CommonSendEvent} from "../common/events"
+import {CommonActionReceiveEvent, CommonReceiveEvent, CommonSendEvent} from "../common/events"
 
-export type ReceiveEvent =
-    CommonReceiveEvent
+export type ReceiveEvent<Settings extends object> =
+    CommonReceiveEvent |
+    CommonActionReceiveEvent<Settings>
+
 export type SendEvent<Settings extends object> =
     CommonSendEvent<Settings>

@@ -1,20 +1,14 @@
-import {AbstractStreamDeckClient} from "../common/AbstractStreamDeckClient"
-import {isActionReceiveEvent, ReceiveEvent} from "./events"
+import {AbstractStreamdeckClient} from "../common/StreamdeckClient"
+import {ReceiveEvent} from "./events"
 import * as ws from "ws"
-import {Action} from "./action"
+import {PluginAction} from "./PluginAction"
+import {isActionReceiveEvent} from "../common/events"
 
-export class Plugin extends AbstractStreamDeckClient<ReceiveEvent> {
-    protected readonly actions = new Map<string, Action>()
+export class Plugin extends AbstractStreamdeckClient<ReceiveEvent> {
+    protected readonly actions = new Map<string, PluginAction>()
 
     public constructor(port: number, event: string, uuid: string) {
         super(event, uuid, new ws.WebSocket(`ws://127.0.0.1:${port}`) as unknown as WebSocket)
-    }
-
-    registerAction(...actions: Action[]) {
-        actions.forEach(action => {
-            action.plugin = this
-            this.actions.set(action.uuid, action)
-        })
     }
 
     protected onClose() {
@@ -22,8 +16,14 @@ export class Plugin extends AbstractStreamDeckClient<ReceiveEvent> {
         process.exit()
     }
 
-    protected onEvent(event: ReceiveEvent) {
-        super.onEvent(event)
+    registerAction(...actions: PluginAction[]) {
+        actions.forEach(action => {
+            action.client = this
+            this.actions.set(action.uuid, action)
+        })
+    }
+
+    protected onEvent(event: ReceiveEvent): void {
         if (isActionReceiveEvent(event)) {
             const action = this.actions.get(event.action)
             action?.emitReceiveEvent(event)

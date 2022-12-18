@@ -3,25 +3,32 @@ import * as ReactDOM from "react-dom"
 import {propertyInspector} from "./PropertyInspector"
 import {PropertyInspector} from "../common/streamdeck/inspector/PropertyInspector"
 import {initLogging} from "../common/logging"
+import {SimpleActionInspector} from "../common/streamdeck/inspector/ActionInspector"
+import {StreamdeckClient} from "../common/streamdeck/common/StreamdeckClient"
+import {action} from "../common/action"
 
 function render(name: string | undefined, onNameChange: (name: string) => void) {
     ReactDOM.render(React.createElement(propertyInspector, { name, onNameChange }), document.getElementById("root"))
+}
+
+function renderer(client: StreamdeckClient) {
+    const onChange = (name: string) => {
+        client.sendEvent({
+            event: "setSettings",
+            context: client.uuid,
+            payload: {name},
+        })
+    }
+    render("Sven", onChange)
 }
 
 export default function connectElgatoStreamDeckSocket(
     inPort: number,
     inPropertyInspectorUUID: string,
     inRegisterEvent: string,
-    inInfo: unknown,
-    inActionInfo: unknown) {
+    inInfo: string,
+    inActionInfo: string) {
     initLogging()
-    const inspector = new PropertyInspector(inPort, inRegisterEvent, inPropertyInspectorUUID)
-    const onChange = (name: string) => {
-        inspector.sendEvent({
-            event: "setSettings",
-            context: inPropertyInspectorUUID,
-            payload: {name},
-        })
-    }
-    inspector.on("connected", () => render("Sven", onChange))
+    const inspector = new PropertyInspector(inPort, inRegisterEvent, inPropertyInspectorUUID, inActionInfo)
+    inspector.registerInspector(new SimpleActionInspector(action.transport, renderer))
 }

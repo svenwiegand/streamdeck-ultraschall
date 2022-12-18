@@ -1,15 +1,20 @@
-import { EventEmitter } from "eventemitter3"
-import { Event, EventHandler, SendEventBase } from "./events"
+import {EventEmitter} from "eventemitter3"
+import {Event, EventHandler, SendEventBase} from "./events"
 
-export abstract class AbstractStreamDeckClient<
-    ReceiveEvent extends Event,
-> {
-    private websockt: WebSocket
-    protected eventEmitter: EventEmitter<string>
+export interface StreamdeckClient {
+    readonly uuid: string
+    sendEvent<E extends SendEventBase>(event: E): void
+}
+
+export abstract class AbstractStreamdeckClient<ReceiveEvent extends Event> implements StreamdeckClient {
+    public readonly uuid: string
+    private readonly websocket: WebSocket
+    protected readonly eventEmitter: EventEmitter<string>
 
     protected constructor(event: string, uuid: string, websocket: WebSocket) {
+        this.uuid = uuid
         this.eventEmitter = new EventEmitter()
-        this.websockt = websocket
+        this.websocket = websocket
         websocket.onopen = () => {
             console.log("websocket open")
             const payload = {event, uuid}
@@ -30,9 +35,7 @@ export abstract class AbstractStreamDeckClient<
         this.eventEmitter.emit("disconnected")
     }
 
-    protected onEvent(event: ReceiveEvent): void {
-        // can be overriden by derived classes – TODO: maybe we can remove this
-    }
+    protected abstract onEvent(event: ReceiveEvent): void
 
     on<E extends ReceiveEvent, EName extends E["event"]>(event: EName, handle: EventHandler<E>) {
         this.eventEmitter.on(event, handle)
@@ -40,6 +43,6 @@ export abstract class AbstractStreamDeckClient<
 
     sendEvent<E extends SendEventBase>(event: E) {
         const json = JSON.stringify(event)
-        this.websockt.send(json)
+        this.websocket.send(json)
     }
 }

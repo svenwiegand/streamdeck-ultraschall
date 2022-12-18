@@ -1,14 +1,10 @@
 import {ActionReceiveEvent, SendEvent} from "./events"
-import {Plugin as PluginClass} from "./plugin"
+import {AbstractAction} from "../common/Action"
 
-export abstract class Action<Settings extends object = object, Plugin extends PluginClass = PluginClass> {
-    public readonly uuid: string
-    public plugin: Plugin | undefined
+export abstract class PluginAction<Settings extends object = object> extends
+    AbstractAction<ActionReceiveEvent<Settings>, SendEvent<Settings>>
+{
     private contextSettings = new Map<string, Settings>()
-
-    protected constructor(uuid: string) {
-        this.uuid = uuid
-    }
 
     public emitReceiveEvent(event: ActionReceiveEvent<Settings>) {
         switch (event.event) {
@@ -19,13 +15,7 @@ export abstract class Action<Settings extends object = object, Plugin extends Pl
                 break
             default:
         }
-        this.onEvent(event)
-    }
-
-    protected abstract onEvent(event: ActionReceiveEvent<Settings>): void
-
-    protected sendEvent(event: SendEvent<Settings>) {
-        this.plugin?.sendEvent(event)
+        super.emitReceiveEvent(event)
     }
 
     protected sendEventToAllInstances<

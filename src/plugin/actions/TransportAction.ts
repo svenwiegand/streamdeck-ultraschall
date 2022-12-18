@@ -1,16 +1,17 @@
-import {Action} from "../../common/streamdeck/plugin/Action"
+import {PluginAction} from "../../common/streamdeck/plugin/PluginAction"
 import {ActionReceiveEvent} from "../../common/streamdeck/plugin/events"
 import {Osc} from "../osc/Osc"
+import {action} from "../../common/action"
 
 interface Settings {
     name?: string
 }
 
-export class TransportAction extends Action<Settings> {
+export class TransportAction extends PluginAction<Settings> {
     private osc: Osc
 
     constructor(osc: Osc) {
-        super("de.sven-wiegand.ultraschall.transport")
+        super(action.transport)
         this.osc = osc
         // { address: '/time', args: [ 13.763957977294922 ] }
         // { address: '/time/str', args: [ '0:13.763' ] }

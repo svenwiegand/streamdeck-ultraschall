@@ -14,7 +14,10 @@ export interface Coordinates {
 export interface ActionReceiveEventBase extends Event {
     action: string
     context: string
-    device: string
+}
+
+export function isActionReceiveEvent(event: Event): event is ActionReceiveEventBase {
+    return "action" in event && "context" in event
 }
 
 export interface DidReceiveSettingsEvent<Settings extends object> extends ActionReceiveEventBase {

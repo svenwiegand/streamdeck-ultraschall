@@ -82,18 +82,3 @@ export interface SetTitleEvent extends SendEventBase {
 export type SendEvent<Settings extends object> =
     CommonSendEvent<Settings> |
     SetTitleEvent
-
-export const actionReceiveEventNames: ActionReceiveEvent<object>["event"][] = [
-    "didReceiveSettings",
-    "keyDown",
-    "keyUp",
-    "willAppear",
-    "willDisappear",
-    "titleParametersDidChange",
-]
-
-export function isActionReceiveEvent<
-    Settings extends object = object
->(event: Event): event is ActionReceiveEvent<Settings> {
-    return (actionReceiveEventNames as string[]).includes(event.event)
-}
