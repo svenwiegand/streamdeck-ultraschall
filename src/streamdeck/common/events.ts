@@ -55,18 +55,45 @@ export type CommonReceiveEvent<Settings extends object, GlobalSettings extends o
 
 // base types
 
-export interface SendEventBase extends Event {
+export interface EventWithContext extends Event {
     context: string
 }
 
 // concrete types
 
-export interface SetSettingsEvent<Settings extends object> extends SendEventBase {
-    event: "setSettings" | "setGlobalSettings"
+export interface SetSettingsEvent<Settings extends object> extends EventWithContext {
+    event: "setSettings"
     payload: Settings
+}
+
+export interface SetGlobalSettingsEvent<GlobalSettings extends object> extends EventWithContext {
+    event: "setGlobalSettings"
+    payload: GlobalSettings
+}
+
+export interface GetSettingsEvent extends EventWithContext {
+    event: "getSettings" | "getGlobalSettings"
+}
+
+export interface OpenUrlEvent extends Event {
+    event: "openUrl",
+    payload: {
+        url: string
+    }
+}
+
+export interface LogMessageEvent extends Event {
+    event: "logMessage",
+    payload: {
+        message: string
+    }
 }
 
 // union types
 
-export type CommonSendEvent<Settings extends object> =
-    SetSettingsEvent<Settings>
+export type CommonSendEvent<Settings extends object, GlobalSettings extends object> =
+    SetSettingsEvent<Settings> |
+    SetGlobalSettingsEvent<GlobalSettings> |
+    GetSettingsEvent |
+    OpenUrlEvent |
+    LogMessageEvent

@@ -1,4 +1,4 @@
-import {CommonReceiveEvent, CommonSendEvent} from "../common/events"
+import {CommonReceiveEvent, CommonSendEvent, EventWithContext} from "../common/events"
 
 ///////////////////////////////////////////////////////////////////////////////
 // receive
@@ -26,6 +26,14 @@ export type ReceiveEvent<
 ///////////////////////////////////////////////////////////////////////////////
 // send
 
+// concrete types
+
+export interface SendToPluginEvent<Payload extends object> extends EventWithContext {
+    event: "sendToPlugin"
+    action: string
+    payload: Payload
+}
+
 // union types
 
 export type SendEvent<
@@ -33,4 +41,5 @@ export type SendEvent<
     GlobalSettings extends object = object,
     Payload extends object = object,
 > =
-    CommonSendEvent<Settings>
+    CommonSendEvent<Settings, GlobalSettings> |
+    SendToPluginEvent<Payload>

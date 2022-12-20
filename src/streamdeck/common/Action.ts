@@ -1,7 +1,7 @@
-import {Event, SendEventBase} from "./events"
+import {Event} from "./events"
 import {StreamdeckClient} from "./StreamdeckClient"
 
-export interface Action<ReceiveEvent extends Event, SendEvent extends SendEventBase> {
+export interface Action<ReceiveEvent extends Event, SendEvent extends Event> {
     readonly uuid: string
     client: StreamdeckClient<SendEvent> | undefined
     emitReceiveEvent(event: ReceiveEvent): void
@@ -10,7 +10,7 @@ export interface Action<ReceiveEvent extends Event, SendEvent extends SendEventB
 
 export abstract class AbstractAction<
     ReceiveEvent extends Event,
-    SendEvent extends SendEventBase,
+    SendEvent extends Event,
 > implements Action<ReceiveEvent, SendEvent> {
     public readonly uuid: string
     public client: StreamdeckClient<SendEvent> | undefined

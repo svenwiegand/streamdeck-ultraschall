@@ -1,16 +1,16 @@
 import {EventEmitter} from "eventemitter3"
-import {Event, SendEventBase} from "./events"
+import {Event} from "./events"
 
 type EventHandler<E extends Event> = (e: E) => void
 
-export interface StreamdeckClient<SendEvent extends SendEventBase> {
+export interface StreamdeckClient<SendEvent extends Event> {
     readonly uuid: string
     sendEvent(event: SendEvent): void
 }
 
 export abstract class AbstractStreamdeckClient<
     ReceiveEvent extends Event,
-    SendEvent extends SendEventBase
+    SendEvent extends Event
 > implements StreamdeckClient<SendEvent> {
     public readonly uuid: string
     private readonly websocket: WebSocket
@@ -46,7 +46,7 @@ export abstract class AbstractStreamdeckClient<
         this.eventEmitter.on(event, handle)
     }
 
-    sendEvent<E extends SendEventBase>(event: E) {
+    sendEvent<E extends Event>(event: E) {
         const json = JSON.stringify(event)
         this.websocket.send(json)
     }

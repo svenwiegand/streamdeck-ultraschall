@@ -4,7 +4,7 @@ import {
     CommonSendEvent,
     Coordinates,
     Event,
-    SendEventBase
+    EventWithContext
 } from "../common/events"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,13 +116,47 @@ export type ReceiveEvent<
 
 // concrete types
 
-export interface SetTitleEvent extends SendEventBase {
+export interface SetTitleEvent extends EventWithContext {
     event: "setTitle"
     payload: {
         title: string
         target: "software" | "hardware" | "both"
+        state?: number
+    }
+}
+
+export interface SetImageEvent extends EventWithContext {
+    event: "setImage"
+    payload: {
+        image: string
+        target: "software" | "hardware" | "both"
+        state?: number
+    }
+}
+
+export interface ShowEvent extends EventWithContext {
+    event: "showAlert" | "showOk"
+}
+
+export interface SetStateEvent extends EventWithContext {
+    event: "setState"
+    payload: {
         state: number
     }
+}
+
+export interface SwitchToProfileEvent extends EventWithContext {
+    event: "switchToProfile"
+    device: string
+    payload: {
+        profile: string
+    }
+}
+
+export interface SendToPropertyInspectorEvent<Payload extends object> extends EventWithContext {
+    event: "sendToPropertyInspector"
+    action: string
+    payload: Payload
 }
 
 // union types
@@ -132,5 +166,10 @@ export type SendEvent<
     GlobalSettings extends object = object,
     Payload extends object = object
 > =
-    CommonSendEvent<Settings> |
-    SetTitleEvent
+    CommonSendEvent<Settings, GlobalSettings> |
+    SetTitleEvent |
+    SetImageEvent |
+    ShowEvent |
+    SetStateEvent |
+    SwitchToProfileEvent |
+    SendToPropertyInspectorEvent<Payload>
