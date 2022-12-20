@@ -19,7 +19,7 @@ export interface ApplicationEvent extends Event {
     }
 }
 
-export interface DeviceDidConnect extends Event {
+export interface DeviceDidConnectEvent extends Event {
     event: "deviceDidConnect"
     device: string
     deviceInfo: {
@@ -32,7 +32,7 @@ export interface DeviceDidConnect extends Event {
     }
 }
 
-export interface ActionKeyEvent<Settings> extends ActionReceiveEventBase {
+export interface KeyEvent<Settings> extends ActionReceiveEventBase {
     event: "keyDown" | "keyUp"
     payload: {
         coordinates: Coordinates
@@ -41,7 +41,7 @@ export interface ActionKeyEvent<Settings> extends ActionReceiveEventBase {
     }
 }
 
-export interface ActionTitleParametersDidChangeEvent<Settings> extends ActionReceiveEventBase {
+export interface TitleParametersDidChangeEvent<Settings> extends ActionReceiveEventBase {
     event: "titleParametersDidChange"
     payload: {
         coordinates: Coordinates
@@ -52,7 +52,7 @@ export interface ActionTitleParametersDidChangeEvent<Settings> extends ActionRec
     }
 }
 
-export interface ActionWillAppearEvent<Settings> extends ActionReceiveEventBase {
+export interface WillAppearEvent<Settings> extends ActionReceiveEventBase {
     event: "willAppear" | "willDisappear"
     payload: {
         controller: string
@@ -67,11 +67,11 @@ export interface ActionWillAppearEvent<Settings> extends ActionReceiveEventBase 
 
 export type ReceiveEvent<Settings extends object> =
     CommonReceiveEvent<Settings> |
-    ActionKeyEvent<Settings> |
-    ActionTitleParametersDidChangeEvent<Settings> |
-    ActionWillAppearEvent<Settings> |
+    KeyEvent<Settings> |
+    TitleParametersDidChangeEvent<Settings> |
+    WillAppearEvent<Settings> |
     ApplicationEvent |
-    DeviceDidConnect
+    DeviceDidConnectEvent
 
 
 ///////////////////////////////////////////////////////////////////////////////
