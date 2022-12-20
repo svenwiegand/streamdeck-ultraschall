@@ -1,12 +1,12 @@
-import {ActionReceiveEvent, SendEvent} from "./events"
+import {ReceiveEvent, SendEvent} from "./events"
 import {AbstractAction} from "../common/Action"
 
 export abstract class PluginAction<Settings extends object = object> extends
-    AbstractAction<ActionReceiveEvent<Settings>, SendEvent<Settings>>
+    AbstractAction<ReceiveEvent<Settings>, SendEvent<Settings>>
 {
     private contextSettings = new Map<string, Settings>()
 
-    emitReceiveEvent(event: ActionReceiveEvent<Settings>) {
+    emitReceiveEvent(event: ReceiveEvent<Settings>) {
         switch (event.event) {
             case "didReceiveSettings":
             case "willAppear":
@@ -30,7 +30,7 @@ export abstract class PluginAction<Settings extends object = object> extends
 }
 
 export type EventHandler<Settings extends object> =
-    (event: ActionReceiveEvent<Settings>, action: PluginAction<Settings>) => void
+    (event: ReceiveEvent<Settings>, action: PluginAction<Settings>) => void
 
 export class SimplePluginAction<Settings extends object> extends PluginAction<Settings> {
     private readonly eventHandler: EventHandler<Settings>
@@ -40,7 +40,7 @@ export class SimplePluginAction<Settings extends object> extends PluginAction<Se
         this.eventHandler = eventHandler
     }
 
-    protected onEvent(event: ActionReceiveEvent<Settings>): void {
+    protected onEvent(event: ReceiveEvent<Settings>): void {
         this.eventHandler?.(event, this)
     }
 }

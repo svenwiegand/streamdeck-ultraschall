@@ -2,7 +2,6 @@ import {AbstractStreamdeckClient} from "../common/StreamdeckClient"
 import {ReceiveEvent, SendEvent} from "./events"
 import * as ws from "ws"
 import {PluginAction} from "./PluginAction"
-import {isActionReceiveEvent} from "../common/events"
 
 export class Plugin extends AbstractStreamdeckClient<ReceiveEvent<object>, SendEvent<object>> {
     protected readonly actions = new Map<string, PluginAction>()
@@ -24,9 +23,11 @@ export class Plugin extends AbstractStreamdeckClient<ReceiveEvent<object>, SendE
     }
 
     protected onEvent(event: ReceiveEvent<object>): void {
-        if (isActionReceiveEvent(event)) {
+        if ("action" in event) {
             const action = this.actions.get(event.action)
             action?.emitReceiveEvent(event)
+        } else {
+            this.actions.forEach(action => action.emitReceiveEvent(event))
         }
     }
 }

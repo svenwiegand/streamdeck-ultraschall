@@ -2,22 +2,27 @@ export interface Event {
     event: string
 }
 
-export interface ConnectionEvent extends Event {
-    event: "connected" | "disconnected"
-}
+///////////////////////////////////////////////////////////////////////////////
+// receive
+
+// data types
 
 export interface Coordinates {
     column: number
     row: number
 }
 
+// base types
+
 export interface ActionReceiveEventBase extends Event {
     action: string
     context: string
 }
 
-export function isActionReceiveEvent(event: Event): event is ActionReceiveEventBase {
-    return "action" in event && "context" in event
+// concrete types
+
+export interface ConnectionEvent extends Event {
+    event: "connected" | "disconnected"
 }
 
 export interface DidReceiveSettingsEvent<Settings extends object> extends ActionReceiveEventBase {
@@ -29,21 +34,30 @@ export interface DidReceiveSettingsEvent<Settings extends object> extends Action
     }
 }
 
-export type CommonReceiveEvent =
-    ConnectionEvent
-export type CommonActionReceiveEvent<Settings extends object> =
+// union types
+
+export type CommonReceiveEvent<Settings extends object> =
+    ConnectionEvent |
     DidReceiveSettingsEvent<Settings>
 
-export type EventHandler<E extends Event> = (e: E) => void
+
+///////////////////////////////////////////////////////////////////////////////
+// send
+
+// base types
 
 export interface SendEventBase extends Event {
     context: string
 }
 
+// concrete types
+
 export interface SetSettingsEvent<Settings extends object> extends SendEventBase {
     event: "setSettings" | "setGlobalSettings"
     payload: Settings
 }
+
+// union types
 
 export type CommonSendEvent<Settings extends object> =
     SetSettingsEvent<Settings>

@@ -1,11 +1,16 @@
 import {
     ActionReceiveEventBase,
-    CommonActionReceiveEvent,
     CommonReceiveEvent,
-    Coordinates,
     CommonSendEvent,
-    Event, SendEventBase
+    Coordinates,
+    Event,
+    SendEventBase
 } from "../common/events"
+
+///////////////////////////////////////////////////////////////////////////////
+// receive
+
+// concrete types
 
 export interface ApplicationEvent extends Event {
     event: "applicationDidLaunch" | "applicationDidTerminate"
@@ -58,17 +63,21 @@ export interface ActionWillAppearEvent<Settings> extends ActionReceiveEventBase 
     }
 }
 
-export type ActionReceiveEvent<Settings extends object> =
-    CommonActionReceiveEvent<Settings> |
+// union types
+
+export type ReceiveEvent<Settings extends object> =
+    CommonReceiveEvent<Settings> |
     ActionKeyEvent<Settings> |
     ActionTitleParametersDidChangeEvent<Settings> |
-    ActionWillAppearEvent<Settings>
-export type ReceiveEvent<Settings extends object> =
-    ActionReceiveEvent<Settings> |
-    CommonReceiveEvent |
+    ActionWillAppearEvent<Settings> |
     ApplicationEvent |
     DeviceDidConnect
 
+
+///////////////////////////////////////////////////////////////////////////////
+// send
+
+// concrete types
 
 export interface SetTitleEvent extends SendEventBase {
     event: "setTitle"

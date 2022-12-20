@@ -1,7 +1,7 @@
 import {AbstractStreamdeckClient} from "../common/StreamdeckClient"
 import {ReceiveEvent, SendEvent} from "./events"
 import {ActionInspector} from "./ActionInspector"
-import {Coordinates, isActionReceiveEvent} from "../common/events"
+import {Coordinates} from "../common/events"
 
 export interface ActionInfo {
     action: string
@@ -46,8 +46,6 @@ export class PropertyInspector extends
     }
 
     protected onEvent(event: ReceiveEvent<object>): void {
-        if (isActionReceiveEvent(event)) {
-            this.inspector?.emitReceiveEvent(event)
-        }
+        this.inspector?.emitReceiveEvent(event)
     }
 }

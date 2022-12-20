@@ -1,5 +1,7 @@
 import {EventEmitter} from "eventemitter3"
-import {Event, EventHandler, SendEventBase} from "./events"
+import {Event, SendEventBase} from "./events"
+
+type EventHandler<E extends Event> = (e: E) => void
 
 export interface StreamdeckClient<SendEvent extends SendEventBase> {
     readonly uuid: string
