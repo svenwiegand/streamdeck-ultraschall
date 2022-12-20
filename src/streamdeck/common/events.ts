@@ -17,6 +17,7 @@ export interface Coordinates {
 export interface ActionReceiveEventBase extends Event {
     action: string
     context: string
+    device: string
 }
 
 // concrete types
@@ -34,11 +35,19 @@ export interface DidReceiveSettingsEvent<Settings extends object> extends Action
     }
 }
 
+export interface DidReceiveGlobalSettings<GlobalSettings extends object> extends Event {
+    event: "didReceiveGlobalSettings"
+    payload: {
+        settings: GlobalSettings
+    }
+}
+
 // union types
 
-export type CommonReceiveEvent<Settings extends object> =
+export type CommonReceiveEvent<Settings extends object, GlobalSettings extends object> =
     ConnectionEvent |
-    DidReceiveSettingsEvent<Settings>
+    DidReceiveSettingsEvent<Settings> |
+    DidReceiveGlobalSettings<GlobalSettings>
 
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -13,8 +13,14 @@ export interface ActionInfo {
     }
 }
 
-export class PropertyInspector extends
-    AbstractStreamdeckClient<ReceiveEvent<object>, SendEvent<object>> {
+export class PropertyInspector<
+    Settings extends object = object,
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> extends AbstractStreamdeckClient<
+    ReceiveEvent<Settings, GlobalSettings, Payload>,
+    SendEvent<Settings, GlobalSettings, Payload>
+> {
     protected readonly actionInfo: ActionInfo
     protected connected = false
     protected inspector?: ActionInspector<object>
@@ -45,7 +51,7 @@ export class PropertyInspector extends
         }
     }
 
-    protected onEvent(event: ReceiveEvent<object>): void {
+    protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>): void {
         this.inspector?.emitReceiveEvent(event)
     }
 }

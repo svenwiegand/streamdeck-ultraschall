@@ -2,21 +2,45 @@ import {AbstractAction} from "../common/Action"
 import {ReceiveEvent, SendEvent} from "./events"
 import {StreamdeckClient} from "../common/StreamdeckClient"
 
-type StandardSendEvent = SendEvent<object>
-
-export abstract class ActionInspector<Settings extends object = object> extends
-    AbstractAction<ReceiveEvent<Settings>, SendEvent<Settings>> {
+export abstract class ActionInspector<
+    Settings extends object = object,
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> extends AbstractAction<
+    ReceiveEvent<Settings, GlobalSettings, Payload>,
+    SendEvent<Settings, GlobalSettings, Payload>
+> {
     abstract render(): void
 }
 
-type InspectorRenderer<SendEvent extends StandardSendEvent> = (client: StreamdeckClient<SendEvent>) => void
-type EventHandler<Settings extends object> = (event: ReceiveEvent<Settings>, client: StreamdeckClient<SendEvent<Settings>>) => void
+type InspectorRenderer<
+    Settings extends object = object,
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> = (client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>>) => void
 
-export class SimpleActionInspector<Settings extends object> extends ActionInspector<Settings> {
-    private readonly renderer: InspectorRenderer<SendEvent<Settings>>
-    private readonly eventHandler?: EventHandler<Settings>
+type EventHandler<
+    Settings extends object = object,
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> = (
+    event: ReceiveEvent<Settings, GlobalSettings, Payload>,
+    client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>>
+) => void
 
-    constructor(uuid: string, render: InspectorRenderer<SendEvent<Settings>>, onEvent?: EventHandler<Settings>) {
+export class SimpleActionInspector<
+    Settings extends object = object,
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> extends ActionInspector<Settings, GlobalSettings, Payload> {
+    private readonly renderer: InspectorRenderer<Settings, GlobalSettings, Payload>
+    private readonly eventHandler?: EventHandler<Settings, GlobalSettings, Payload>
+
+    constructor(
+        uuid: string,
+        render: InspectorRenderer<Settings, GlobalSettings, Payload>,
+        onEvent?: EventHandler<Settings, GlobalSettings, Payload>
+    ) {
         super(uuid)
         this.renderer = render
         this.eventHandler = onEvent
@@ -28,7 +52,7 @@ export class SimpleActionInspector<Settings extends object> extends ActionInspec
         }
     }
 
-    protected onEvent(event: ReceiveEvent<Settings>) {
+    protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>) {
         if (this.client) {
             this.eventHandler?.(event, this.client)
         }

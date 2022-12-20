@@ -12,10 +12,43 @@ import {
 
 // concrete types
 
-export interface ApplicationEvent extends Event {
-    event: "applicationDidLaunch" | "applicationDidTerminate"
+export interface KeyEvent<Settings> extends ActionReceiveEventBase {
+    event: "keyDown" | "keyUp"
     payload: {
-        application: string
+        settings: Settings
+        coordinates: Coordinates
+        state?: number
+        userDesiredState: 0 | 1
+        isInMultiAction: boolean
+    }
+}
+
+export interface AppearanceEvent<Settings> extends ActionReceiveEventBase {
+    event: "willAppear" | "willDisappear"
+    payload: {
+        settings: Settings
+        coordinates: Coordinates
+        state?: string
+        isInMultiAction: boolean
+    }
+}
+
+export interface TitleParametersDidChangeEvent<Settings> extends ActionReceiveEventBase {
+    event: "titleParametersDidChange"
+    payload: {
+        settings: Settings
+        coordinates: Coordinates
+        state?: number
+        title: string
+        titleParameters: {
+            fontFamily: string
+            fontSize: number
+            fontStyle: string
+            fondUnderline: boolean
+            showTitle: boolean
+            titleAlignment: "top" | "middle" | "bottom"
+            titleColor: string
+        }
     }
 }
 
@@ -24,54 +57,58 @@ export interface DeviceDidConnectEvent extends Event {
     device: string
     deviceInfo: {
         name: string
+        type: number
         size: {
             columns: number
             rows: number
         }
-        type: number
     }
 }
 
-export interface KeyEvent<Settings> extends ActionReceiveEventBase {
-    event: "keyDown" | "keyUp"
+export interface DeviceDidDisconnectEvent extends Event {
+    event: "deviceDidDisconnect"
+    device: string
+}
+
+export interface ApplicationEvent extends Event {
+    event: "applicationDidLaunch" | "applicationDidTerminate"
     payload: {
-        coordinates: Coordinates
-        isInMultiAction: boolean
-        settings: Settings
+        application: string
     }
 }
 
-export interface TitleParametersDidChangeEvent<Settings> extends ActionReceiveEventBase {
-    event: "titleParametersDidChange"
-    payload: {
-        coordinates: Coordinates
-        settings: Settings
-        state: number
-        title: string
-        titleParameters: unknown
-    }
+export interface SystemDidWakeUpEvent extends Event {
+    event: "systemDidWakeUp"
 }
 
-export interface WillAppearEvent<Settings> extends ActionReceiveEventBase {
-    event: "willAppear" | "willDisappear"
-    payload: {
-        controller: string
-        coordinates: Coordinates
-        state: string
-        isInMultiAction: boolean
-        settings: Settings
-    }
+export interface PropertyInspectorAppearanceEvent extends ActionReceiveEventBase {
+    event: "propertyInspectorDidAppear" | "propertyInspectorDidDisappear"
+}
+
+export interface SendToPluginEvent<Payload> extends Event {
+    event: "sendToPlugin"
+    action: string
+    context: string
+    payload: Payload
 }
 
 // union types
 
-export type ReceiveEvent<Settings extends object> =
-    CommonReceiveEvent<Settings> |
+export type ReceiveEvent<
+    Settings extends object = object,
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> =
+    CommonReceiveEvent<Settings, GlobalSettings> |
     KeyEvent<Settings> |
+    AppearanceEvent<Settings> |
     TitleParametersDidChangeEvent<Settings> |
-    WillAppearEvent<Settings> |
+    DeviceDidConnectEvent |
+    DeviceDidDisconnectEvent |
     ApplicationEvent |
-    DeviceDidConnectEvent
+    SystemDidWakeUpEvent |
+    PropertyInspectorAppearanceEvent |
+    SendToPluginEvent<Payload>
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -88,6 +125,12 @@ export interface SetTitleEvent extends SendEventBase {
     }
 }
 
-export type SendEvent<Settings extends object> =
+// union types
+
+export type SendEvent<
+    Settings extends object = object,
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> =
     CommonSendEvent<Settings> |
     SetTitleEvent
