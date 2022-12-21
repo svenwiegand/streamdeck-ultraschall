@@ -8,24 +8,28 @@ export abstract class ActionInspector<
     Payload extends object = object
 > extends AbstractAction<
     ReceiveEvent<Settings, GlobalSettings, Payload>,
-    SendEvent<Settings, GlobalSettings, Payload>
+    SendEvent<Settings, GlobalSettings, Payload>,
+    GlobalSettings
 > {
-    abstract render(): void
+    abstract render(settings: Settings): void
 }
 
-type InspectorRenderer<
+export type InspectorRenderer<
     Settings extends object = object,
     GlobalSettings extends object = object,
     Payload extends object = object
-> = (client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>>) => void
+> = (
+    settings: Settings,
+    client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>, GlobalSettings>
+) => void
 
-type EventHandler<
+export type EventHandler<
     Settings extends object = object,
     GlobalSettings extends object = object,
     Payload extends object = object
 > = (
     event: ReceiveEvent<Settings, GlobalSettings, Payload>,
-    client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>>
+    client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>, GlobalSettings>
 ) => void
 
 export class SimpleActionInspector<
@@ -46,9 +50,9 @@ export class SimpleActionInspector<
         this.eventHandler = onEvent
     }
 
-    render(): void {
+    render(settings: Settings): void {
         if (this.client) {
-            this.renderer(this.client)
+            this.renderer(settings, this.client)
         }
     }
 

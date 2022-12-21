@@ -1,17 +1,19 @@
 import {EventEmitter} from "eventemitter3"
-import {Event} from "./events"
+import {DidReceiveGlobalSettingsEvent, Event} from "./events"
 
 type EventHandler<E extends Event> = (e: E) => void
 
-export interface StreamdeckClient<SendEvent extends Event> {
+export interface StreamdeckClient<SendEvent extends Event, GlobalSettings extends object> {
     readonly uuid: string
     sendEvent(event: SendEvent): void
+    getGlobalSettings(): Promise<GlobalSettings>
 }
 
 export abstract class AbstractStreamdeckClient<
+    GlobalSettings extends object,
     ReceiveEvent extends Event,
     SendEvent extends Event
-> implements StreamdeckClient<SendEvent> {
+> implements StreamdeckClient<SendEvent, GlobalSettings> {
     public readonly uuid: string
     private readonly websocket: WebSocket
     protected readonly eventEmitter: EventEmitter<string>
@@ -49,5 +51,16 @@ export abstract class AbstractStreamdeckClient<
     sendEvent<E extends Event>(event: E) {
         const json = JSON.stringify(event)
         this.websocket.send(json)
+    }
+
+    getGlobalSettings(): Promise<GlobalSettings> {
+        return new Promise<GlobalSettings>(resolve => {
+            const eventHandler = (event: DidReceiveGlobalSettingsEvent<GlobalSettings>) => {
+                this.eventEmitter.off("didReceiveGlobalSettings", eventHandler)
+                resolve(event.payload.settings)
+            }
+            this.eventEmitter.on("didReceiveGlobalSettings", eventHandler)
+            this.sendEvent({ event: "getGlobalSettings", context: this.uuid })
+        })
     }
 }

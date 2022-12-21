@@ -35,7 +35,7 @@ export interface DidReceiveSettingsEvent<Settings extends object> extends Action
     }
 }
 
-export interface DidReceiveGlobalSettings<GlobalSettings extends object> extends Event {
+export interface DidReceiveGlobalSettingsEvent<GlobalSettings extends object> extends Event {
     event: "didReceiveGlobalSettings"
     payload: {
         settings: GlobalSettings
@@ -47,7 +47,7 @@ export interface DidReceiveGlobalSettings<GlobalSettings extends object> extends
 export type CommonReceiveEvent<Settings extends object, GlobalSettings extends object> =
     ConnectionEvent |
     DidReceiveSettingsEvent<Settings> |
-    DidReceiveGlobalSettings<GlobalSettings>
+    DidReceiveGlobalSettingsEvent<GlobalSettings>
 
 
 ///////////////////////////////////////////////////////////////////////////////

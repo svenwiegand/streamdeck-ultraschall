@@ -7,7 +7,8 @@ export abstract class PluginAction<
     Payload extends object = object
 > extends AbstractAction<
     ReceiveEvent<Settings, GlobalSettings, Payload>,
-    SendEvent<Settings, GlobalSettings, Payload>
+    SendEvent<Settings, GlobalSettings, Payload>,
+    GlobalSettings
 >
 {
     private contextSettings = new Map<string, Settings>()

@@ -8,6 +8,7 @@ export class Plugin<
     GlobalSettings extends object = object,
     Payload extends object = object
 > extends AbstractStreamdeckClient<
+    GlobalSettings,
     ReceiveEvent<Settings, GlobalSettings, Payload>,
     SendEvent<Settings, GlobalSettings, Payload>
 > {
