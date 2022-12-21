@@ -1,31 +1,33 @@
 import * as React from "react"
 import {SDTextInput} from "react-streamdeck"
-import * as ReactDOM from "react-dom"
 import {StreamdeckClient} from "../../streamdeck/common/StreamdeckClient"
 import {SendEvent} from "../../streamdeck/inspector/events"
-import {SimpleActionInspector} from "../../streamdeck/inspector/ActionInspector"
 import {actionId, Settings} from "../../common/actions/transport"
+import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
+import {GlobalSettings} from "../../common/actions/global"
+import {ReactActionInspector} from "./ReactActionInspector"
 
 interface Props {
     name?: string
     onNameChange: (name: string) => void
+    client: StreamdeckClient<SendEvent<Settings, GlobalSettings>, GlobalSettings>
 }
 
-const propertyInspector: React.FC<Props> = (props: Props) => {
+const PropertyInspector: React.FC<Props> = (props: Props) => {
     const [name, setName] = React.useState(props.name ?? "Sven")
     const onNameChange = (e: React.FormEvent<HTMLInputElement>) => {
         setName(e.currentTarget.value)
         props.onNameChange?.(e.currentTarget.value)
     }
     return (
-        <>
+        <InspectorWithGlobalSettings client={props.client}>
             <SDTextInput value={name} label={"Your name"} onChange={onNameChange} />
-            <div>Hello {name}!</div>
-        </>
+            <div>{name}</div>
+        </InspectorWithGlobalSettings>
     )
 }
 
-function render(client: StreamdeckClient<SendEvent<Settings>>) {
+const props = (settings: Settings, client: StreamdeckClient<SendEvent<Settings, GlobalSettings>, GlobalSettings>) => {
     const onNameChange = (name: string) => {
         client.sendEvent({
             event: "setSettings",
@@ -33,7 +35,11 @@ function render(client: StreamdeckClient<SendEvent<Settings>>) {
             payload: {name},
         })
     }
-    ReactDOM.render(React.createElement(propertyInspector, {name: "Sven", onNameChange}), document.getElementById("root"))
+    return {
+        name: settings.name,
+        onNameChange,
+        client,
+    }
 }
 
-export const transportInspector = new SimpleActionInspector(actionId, render)
+export const transportInspector = new ReactActionInspector(actionId, PropertyInspector, props)

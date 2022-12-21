@@ -3,6 +3,8 @@ import {Plugin} from "../streamdeck/plugin/Plugin"
 import {Osc} from "./osc/Osc"
 import {initLogging} from "../common/logging"
 import {transportAction} from "./actions/transport"
+import {GlobalSettings, globalSettingsDefault} from "../common/actions/global"
+import {DidReceiveGlobalSettingsEvent} from "../streamdeck/common/events"
 
 initLogging()
 console.log(new Date())
@@ -17,10 +19,14 @@ const registration = {
 }
 console.debug(registration)
 
-const plugin = new Plugin(registration.port, registration.event, registration.uuid)
+const plugin = new Plugin<object, GlobalSettings>(registration.port, registration.event, registration.uuid)
 const osc = new Osc()
+plugin.on("didReceiveGlobalSettings", (event: DidReceiveGlobalSettingsEvent<GlobalSettings>) => {
+    const settings = {...globalSettingsDefault, ...event.payload.settings}
+    osc.connect(settings.hostIp, settings.sendPort, "0.0.0.0", settings.receivePort)
+})
 plugin.on("applicationDidLaunch", () => {
-    osc.connect("127.0.0.1", 8000, "0.0.0.0", 9050)
+    plugin.sendEvent({event: "getGlobalSettings", context: plugin.uuid})
 })
 plugin.on("applicationDidTerminate", () => {
     osc.close()
