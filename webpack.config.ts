@@ -50,7 +50,7 @@ const pluginConfig: webpack.Configuration = {
         },
         alias: {
             assets: path.resolve(__dirname, "assets/"),
-            common: path.resolve(__dirname, "common/"),
+            common: path.resolve(__dirname, "src/common/"),
             streamdeck: path.resolve(__dirname, "src/streamdeck/"),
         },
     },
@@ -86,7 +86,7 @@ const inspectorConfig: webpack.Configuration = {
     resolve: {
         extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
         alias: {
-            common: path.resolve(__dirname, "common/"),
+            common: path.resolve(__dirname, "src/common/"),
             streamdeck: path.resolve(__dirname, "src/streamdeck/"),
         },
     },
