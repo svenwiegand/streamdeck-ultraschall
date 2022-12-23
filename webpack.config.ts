@@ -1,7 +1,7 @@
 import * as path from "path"
 import * as webpack from "webpack"
-import * as nodeExternals from "webpack-node-externals"
-import * as CopyPlugin from "copy-webpack-plugin"
+import nodeExternals from "webpack-node-externals"
+import CopyPlugin from "copy-webpack-plugin"
 
 const isProduction = process.env.NODE_ENV == "production"
 const outputPath = "dist/de.sven-wiegand.ultraschall.sdPlugin"
@@ -27,11 +27,16 @@ const pluginConfig: webpack.Configuration = {
                 test: /\.(ts|tsx)$/i,
                 loader: "ts-loader",
                 include: [
+                    path.join(__dirname, 'assets/'),
                     path.join(__dirname, 'src/common/'),
                     path.join(__dirname, 'src/plugin/'),
                     path.join(__dirname, 'src/streamdeck/'),
                 ],
                 exclude: ["/node_modules/"],
+            },
+            {
+                test: /\.svg$/i,
+                type: "asset/inline",
             },
 
             // Add your rules for custom modules here
@@ -39,9 +44,14 @@ const pluginConfig: webpack.Configuration = {
         ],
     },
     resolve: {
-        extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
+        extensions: [".tsx", ".ts", ".jsx", ".js", ".svg", "..."],
         fallback: {
             "fs": false,
+        },
+        alias: {
+            assets: path.resolve(__dirname, "assets/"),
+            common: path.resolve(__dirname, "common/"),
+            streamdeck: path.resolve(__dirname, "src/streamdeck/"),
         },
     },
 }
@@ -75,6 +85,10 @@ const inspectorConfig: webpack.Configuration = {
     },
     resolve: {
         extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
+        alias: {
+            common: path.resolve(__dirname, "common/"),
+            streamdeck: path.resolve(__dirname, "src/streamdeck/"),
+        },
     },
     optimization: {
         splitChunks: {},

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es5",
+    "esModuleInterop": true,
     "allowJs": true,
     "jsx": "react-jsx",
     "sourceMap": true,
@@ -19,6 +20,13 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "assets/*": ["src/assets/*"],
+      "common/*": ["src/common/*"],
+      "streamdeck/*": ["src/streamdeck/*"]
+    }
   }
 }
