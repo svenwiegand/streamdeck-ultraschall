@@ -28,7 +28,6 @@ export class MuteAction extends PluginAction<Settings> {
             context: context,
             payload: {
                 title: settings.track.toString() ?? "",
-                target: "both",
             }
         })
     }
@@ -41,7 +40,6 @@ export class MuteAction extends PluginAction<Settings> {
             context: context,
             payload: {
                 image: icon,
-                target: "both",
             }
         })
     }

@@ -120,7 +120,7 @@ export interface SetTitleEvent extends EventWithContext {
     event: "setTitle"
     payload: {
         title: string
-        target: "software" | "hardware" | "both"
+        target?: "software" | "hardware" | "both"
         state?: number
     }
 }
@@ -129,7 +129,7 @@ export interface SetImageEvent extends EventWithContext {
     event: "setImage"
     payload: {
         image: string
-        target: "software" | "hardware" | "both"
+        target?: "software" | "hardware" | "both"
         state?: number
     }
 }
