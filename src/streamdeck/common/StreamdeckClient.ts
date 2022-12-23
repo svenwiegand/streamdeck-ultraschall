@@ -3,7 +3,7 @@ import {DidReceiveGlobalSettingsEvent, Event} from "./events"
 
 type EventHandler<E extends Event> = (e: E) => void
 
-export interface StreamdeckClient<SendEvent extends Event, GlobalSettings extends object> {
+export interface StreamdeckClient<SendEvent extends Event, GlobalSettings extends object = object> {
     readonly uuid: string
     sendEvent(event: SendEvent): void
     getGlobalSettings(): Promise<GlobalSettings>

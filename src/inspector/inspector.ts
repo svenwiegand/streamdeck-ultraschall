@@ -1,6 +1,7 @@
-import {PropertyInspector} from "../streamdeck/inspector/PropertyInspector"
-import {initLogging} from "../common/logging"
+import {PropertyInspector} from "streamdeck/inspector/PropertyInspector"
+import {initLogging} from "common/logging"
 import {transportInspector} from "./inspectors/transport"
+import {muteInspector} from "./inspectors/Mute"
 
 export default function connectElgatoStreamDeckSocket(
     inPort: number,
@@ -10,5 +11,8 @@ export default function connectElgatoStreamDeckSocket(
     inActionInfo: string) {
     initLogging()
     const inspector = new PropertyInspector(inPort, inRegisterEvent, inPropertyInspectorUUID, inActionInfo)
-    inspector.registerInspector(transportInspector)
+    inspector.registerInspector(
+        transportInspector,
+        muteInspector
+    )
 }

@@ -1,10 +1,11 @@
-import * as assert from "assert"
-import {Plugin} from "../streamdeck/plugin/Plugin"
+import assert from "assert"
+import {Plugin} from "streamdeck/plugin/Plugin"
 import {Osc} from "./osc/Osc"
-import {initLogging} from "../common/logging"
+import {initLogging} from "common/logging"
 import {transportAction} from "./actions/transport"
-import {GlobalSettings, globalSettingsDefault} from "../common/actions/global"
-import {DidReceiveGlobalSettingsEvent} from "../streamdeck/common/events"
+import {GlobalSettings, globalSettingsDefault} from "common/actions/global"
+import {DidReceiveGlobalSettingsEvent} from "streamdeck/common/events"
+import {MuteAction} from "./actions/mute"
 
 initLogging()
 console.log(new Date())
@@ -33,3 +34,4 @@ plugin.on("applicationDidTerminate", () => {
 })
 
 plugin.registerAction(transportAction(osc))
+plugin.registerAction(new MuteAction(osc))

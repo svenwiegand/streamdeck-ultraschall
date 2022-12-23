@@ -24,14 +24,7 @@
         {
           "Image": "images/key-mute",
           "TitleAlignment": "bottom",
-          "FontSize": 12,
-          "TitleColor": "#A6A6A6"
-        },
-        {
-          "Image": "images/key-muted",
-          "TitleAlignment": "bottom",
-          "FontSize": 12,
-          "TitleColor": "#1e1e1e"
+          "FontSize": 12
         }
       ]
     }
