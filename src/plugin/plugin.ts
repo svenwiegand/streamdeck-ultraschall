@@ -2,10 +2,10 @@ import assert from "assert"
 import {Plugin} from "streamdeck/plugin/Plugin"
 import {Osc} from "./osc/Osc"
 import {initLogging} from "common/logging"
-import {transportAction} from "./actions/transport"
 import {GlobalSettings, globalSettingsDefault} from "common/actions/global"
 import {DidReceiveGlobalSettingsEvent} from "streamdeck/common/events"
-import {MuteAction} from "./actions/mute"
+import {MuteAction} from "./actions/MuteAction"
+import {RecordAction} from "./actions/RecordAction"
 
 initLogging()
 console.log(new Date())
@@ -33,5 +33,5 @@ plugin.on("applicationDidTerminate", () => {
     osc.close()
 })
 
-plugin.registerAction(transportAction(osc))
+plugin.registerAction(new RecordAction(osc))
 plugin.registerAction(new MuteAction(osc))

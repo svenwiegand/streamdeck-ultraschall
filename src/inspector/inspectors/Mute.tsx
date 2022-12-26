@@ -7,7 +7,7 @@ import {GlobalSettings} from "common/actions/global"
 import {ReactActionInspector} from "./ReactActionInspector"
 
 interface Props {
-    track: number
+    track?: number
     onTrackChange: (track: number) => void
     client: StreamdeckClient<SendEvent<Settings, GlobalSettings>, GlobalSettings>
 }
@@ -41,7 +41,7 @@ const props = (settings: Settings, client: StreamdeckClient<SendEvent<Settings, 
         track: settings.track,
         onTrackChange,
         client,
-    }
+    } as Props
 }
 
 export const muteInspector = new ReactActionInspector(actionId, PropertyInspector, props)

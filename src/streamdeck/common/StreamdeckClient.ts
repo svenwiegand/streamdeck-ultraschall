@@ -3,10 +3,16 @@ import {DidReceiveGlobalSettingsEvent, Event} from "./events"
 
 type EventHandler<E extends Event> = (e: E) => void
 
-export interface StreamdeckClient<SendEvent extends Event, GlobalSettings extends object = object> {
+export interface StreamdeckClient<
+    SendEvent extends Event,
+    GlobalSettings extends object = object
+> {
     readonly uuid: string
     sendEvent(event: SendEvent): void
+    setGlobalSettings(settings: GlobalSettings): void
     getGlobalSettings(): Promise<GlobalSettings>
+    openUrl(url: string): void
+    logMessage(message: string): void
 }
 
 export abstract class AbstractStreamdeckClient<
@@ -61,6 +67,28 @@ export abstract class AbstractStreamdeckClient<
             }
             this.eventEmitter.on("didReceiveGlobalSettings", eventHandler)
             this.sendEvent({ event: "getGlobalSettings", context: this.uuid })
+        })
+    }
+
+    setGlobalSettings(settings: GlobalSettings): void {
+        this.sendEvent({
+            event: "setGlobalSettings",
+            context: this.uuid,
+            payload: settings,
+        })
+    }
+
+    openUrl(url: string): void {
+        this.sendEvent({
+            event: "openUrl",
+            payload: {url}
+        })
+    }
+
+    logMessage(message: string): void {
+        this.sendEvent({
+            event: "logMessage",
+            payload: {message}
         })
     }
 }

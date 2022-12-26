@@ -1,4 +1,3 @@
-//import {Client, Server, Message, MessageLike, ArgumentType} from "node-osc"
 import {ArgumentType, createUDPPort, Message, UDPPort} from "./typedOsc"
 import {EventEmitter} from "eventemitter3"
 
@@ -38,7 +37,11 @@ export class Osc {
         this.port?.send({ address, args })
     }
 
-    onMessage(address: string, handle: (msg: Message) => void) {
-        this.emitter.on(address, handle)
+    addListener(address: string, handle: (msg: Message) => void) {
+        this.emitter.addListener(address, handle)
+    }
+
+    removeListener(address: string, handle: (msg: Message) => void) {
+        this.emitter.removeListener(address, handle)
     }
 }
