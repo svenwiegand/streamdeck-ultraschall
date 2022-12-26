@@ -53,6 +53,6 @@ export class PropertyInspector<
     }
 
     protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>): void {
-        this.inspector?.emitReceiveEvent(event)
+        this.inspector?.receiveEvent(event)
     }
 }

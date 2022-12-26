@@ -22,7 +22,7 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
     return (
         <InspectorWithGlobalSettings client={props.client}>
             <div className="sdpi-item">
-                <div className="sdpi-item-label">Track (1-99)</div>
+                <div className="sdpi-item-label">Track (1-9)</div>
                 <input type="number" className="sdpi-item-value" value={track} onChange={onTrackChange}/>
             </div>
         </InspectorWithGlobalSettings>

@@ -4,7 +4,7 @@ import {StreamdeckClient} from "./StreamdeckClient"
 export interface Action<ReceiveEvent extends Event, SendEvent extends Event, GlobalSettings extends object> {
     readonly uuid: string
     client: StreamdeckClient<SendEvent, GlobalSettings> | undefined
-    emitReceiveEvent(event: ReceiveEvent): void
+    receiveEvent(event: ReceiveEvent): void
     sendEvent(event: SendEvent): void
 }
 
@@ -23,7 +23,7 @@ export abstract class AbstractAction<
     /**
      * Will be called by concrete [AbstractStreamDeckClient] implementation, when event is received.
      */
-    public emitReceiveEvent(event: ReceiveEvent) {
+    public receiveEvent(event: ReceiveEvent) {
         this.onEvent(event)
     }
 

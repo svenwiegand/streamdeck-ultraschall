@@ -33,9 +33,9 @@ export class Plugin<
     protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>): void {
         if ("action" in event) {
             const action = this.actions.get(event.action)
-            action?.emitReceiveEvent(event)
+            action?.receiveEvent(event)
         } else {
-            this.actions.forEach(action => action.emitReceiveEvent(event))
+            this.actions.forEach(action => action.receiveEvent(event))
         }
     }
 }

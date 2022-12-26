@@ -6,31 +6,44 @@ import {OscAction} from "./OscAction"
 import {Message} from "../osc/typedOsc"
 import iconMute from "assets/images/key-mute.svg"
 import iconMuted from "assets/images/key-muted.svg"
+import {GlobalSettings} from "common/actions/global"
 
-export class MuteAction extends OscAction<Settings> {
+interface State {
+    muted: boolean
+}
+
+type Instance = ActionInstance<Settings, GlobalSettings, object, State>
+
+export class MuteAction extends OscAction<Settings, GlobalSettings, object, State> {
     constructor(osc: Osc) {
         super(actionId, osc)
     }
 
-    protected onKeyDown(instance: ActionInstance<Settings>, payload: KeyEvent<Settings>["payload"]) {
+    protected deriveState(settings: Settings, instance?: Instance): State | undefined {
+        return {
+            muted: false
+        }
+    }
+
+    protected onKeyDown(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
         super.onKeyDown(instance, payload)
-        // _Ultraschall_Toggle_Mute_Track001
-        // _Ultraschall_Mute_Track001
-        // _Ultraschall_UnMute_Track001
-        // Tracks 001 - 010
-        this.osc.send(`/action/_Ultraschall_Toggle_Mute_Track00${payload.settings.track}`)
+        if (instance.settings.track) {
+            const mute = !instance.state?.muted
+            this.osc.send(`/action/_Ultraschall_${mute ? "Mute" : "UnMute"}_Track00${payload.settings.track}`)
+            this.forEachInstance(i => {
+                if (i.settings.track === instance.settings.track) {
+                    this.updateState(i, mute)
+                }
+            })
+        }
     }
 
     protected instanceTitle(settings: Settings): string | undefined {
         return settings.track?.toString()
     }
 
-    protected instanceOscSubscribeAddress(settings: Settings): string | undefined {
-        return settings.track ? `/track/${settings.track}/mute` : undefined
-    }
-
-    onOscMessage(instance: ActionInstance<Settings>, msg: Message) {
-        const muted = (msg.args?.[0] as number) > 0
+    private updateState(instance: Instance, muted: boolean) {
+        instance.state = { muted }
         instance.setImage(muted ? iconMuted : iconMute)
     }
 }
