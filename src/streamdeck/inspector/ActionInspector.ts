@@ -1,6 +1,5 @@
 import {AbstractAction} from "../common/Action"
 import {ReceiveEvent, SendEvent} from "./events"
-import {StreamdeckClient} from "../common/StreamdeckClient"
 
 export abstract class ActionInspector<
     Settings extends object = object,
@@ -12,53 +11,61 @@ export abstract class ActionInspector<
     GlobalSettings
 > {
     abstract render(settings: Settings): void
-}
 
-export type InspectorRenderer<
-    Settings extends object = object,
-    GlobalSettings extends object = object,
-    Payload extends object = object
-> = (
-    settings: Settings,
-    client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>, GlobalSettings>
-) => void
-
-export type EventHandler<
-    Settings extends object = object,
-    GlobalSettings extends object = object,
-    Payload extends object = object
-> = (
-    event: ReceiveEvent<Settings, GlobalSettings, Payload>,
-    client: StreamdeckClient<SendEvent<Settings, GlobalSettings, Payload>, GlobalSettings>
-) => void
-
-export class SimpleActionInspector<
-    Settings extends object = object,
-    GlobalSettings extends object = object,
-    Payload extends object = object
-> extends ActionInspector<Settings, GlobalSettings, Payload> {
-    private readonly renderer: InspectorRenderer<Settings, GlobalSettings, Payload>
-    private readonly eventHandler?: EventHandler<Settings, GlobalSettings, Payload>
-
-    constructor(
-        uuid: string,
-        render: InspectorRenderer<Settings, GlobalSettings, Payload>,
-        onEvent?: EventHandler<Settings, GlobalSettings, Payload>
-    ) {
-        super(uuid)
-        this.renderer = render
-        this.eventHandler = onEvent
+    setSettings(settings: Settings) {
+        if (this.client) {
+            this.sendEvent({
+                event: "setSettings",
+                context: this.client.uuid,
+                payload: settings,
+            })
+        }
     }
 
-    render(settings: Settings): void {
+    setGlobalSettings(settings: GlobalSettings) {
+        this.client?.setGlobalSettings(settings)
+    }
+
+    getGlobalSettings(): Promise<GlobalSettings> {
+        if (this.client)
+            return this.client?.getGlobalSettings()
+        else
+            return Promise.reject("Client not set")
+    }
+
+    sendToPlugin(payload: Payload) {
         if (this.client) {
-            this.renderer(settings, this.client)
+            this.sendEvent({
+                event: "sendToPlugin",
+                context: this.client.uuid,
+                action: this.uuid,
+                payload,
+            })
         }
     }
 
     protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>) {
-        if (this.client) {
-            this.eventHandler?.(event, this.client)
+        switch (event.event) {
+            case "didReceiveSettings":
+                return this.onDidReceiveSettings(event.payload.settings)
+            case "didReceiveGlobalSettings":
+                return this.onDidReceiveGlobalSettings(event.payload.settings)
+            case "sendToPropertyInspector":
+                return this.onSendToPropertyInspector(event.payload)
+            case "connected": break
+            case "disconnected": break
         }
+    }
+
+    protected onDidReceiveSettings(settings: Settings) {
+        // no default implementation
+    }
+
+    protected onDidReceiveGlobalSettings(settings: GlobalSettings) {
+        // no default implementation
+    }
+
+    protected onSendToPropertyInspector(payload: Payload) {
+        // no default implementation
     }
 }

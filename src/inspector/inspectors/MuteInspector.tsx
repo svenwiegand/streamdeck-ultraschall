@@ -1,15 +1,14 @@
 import * as React from "react"
-import {StreamdeckClient} from "streamdeck/common/StreamdeckClient"
-import {SendEvent} from "streamdeck/inspector/events"
 import {actionId, Settings} from "common/actions/mute"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
 import {GlobalSettings} from "common/actions/global"
 import {ReactActionInspector} from "./ReactActionInspector"
+import {ActionInspector} from "streamdeck/inspector/ActionInspector"
 
 interface Props {
     track?: number
     onTrackChange: (track: number) => void
-    client: StreamdeckClient<SendEvent<Settings, GlobalSettings>, GlobalSettings>
+    inspector: ActionInspector<Settings, GlobalSettings>
 }
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
@@ -20,7 +19,7 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
         props.onTrackChange(newTrack)
     }
     return (
-        <InspectorWithGlobalSettings client={props.client}>
+        <InspectorWithGlobalSettings inspector={props.inspector}>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">Track (1-9)</div>
                 <input type="number" className="sdpi-item-value" value={track} onChange={onTrackChange}/>
@@ -29,19 +28,17 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
     )
 }
 
-const props = (settings: Settings, client: StreamdeckClient<SendEvent<Settings, GlobalSettings>, GlobalSettings>) => {
-    const onTrackChange = (track: number) => {
-        client.sendEvent({
-            event: "setSettings",
-            context: client.uuid,
-            payload: {track},
-        })
+export class MuteInspector extends ReactActionInspector<Props, Settings> {
+    constructor() {
+        super(actionId, PropertyInspector)
     }
-    return {
-        track: settings.track,
-        onTrackChange,
-        client,
-    } as Props
-}
 
-export const muteInspector = new ReactActionInspector(actionId, PropertyInspector, props)
+    protected props(settings: Settings): Props {
+        const onTrackChange = (track: number) => this.setSettings({track})
+        return {
+            track: settings.track,
+            onTrackChange,
+            inspector: this
+        }
+    }
+}
