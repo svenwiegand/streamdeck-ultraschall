@@ -3,18 +3,16 @@ import {ActionInstance} from "streamdeck/plugin/PluginAction"
 import {actionId, Settings} from "common/actions/mute"
 import {KeyEvent} from "streamdeck/plugin/events"
 import {OscAction} from "./OscAction"
-import {Message} from "../osc/typedOsc"
 import iconMute from "assets/images/key-mute.svg"
 import iconMuted from "assets/images/key-muted.svg"
-import {GlobalSettings} from "common/actions/global"
 
 interface State {
     muted: boolean
 }
 
-type Instance = ActionInstance<Settings, GlobalSettings, object, State>
+type Instance = ActionInstance<Settings, State>
 
-export class MuteAction extends OscAction<Settings, GlobalSettings, object, State> {
+export class MuteAction extends OscAction<Settings, State> {
     constructor(osc: Osc) {
         super(actionId, osc)
     }

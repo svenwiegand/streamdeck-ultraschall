@@ -10,16 +10,16 @@ import {AbstractAction} from "../common/Action"
 
 export class ActionInstance<
     Settings extends object = object,
-    GlobalSettings extends object = object,
+    State extends object = object,
     Payload extends object = object,
-    State extends object = object
+    GlobalSettings extends object = object
 > {
-    readonly action: PluginAction<Settings, GlobalSettings, Payload>
+    readonly action: PluginAction<Settings, State, Payload, GlobalSettings>
     readonly context: string
     _settings: Settings
     state?: State
 
-    constructor(action: PluginAction<Settings, GlobalSettings, Payload>, context: string, settings: Settings, state?: State) {
+    constructor(action: PluginAction<Settings, State, Payload, GlobalSettings>, context: string, settings: Settings, state: State) {
         this.action = action
         this.context = context
         this._settings = settings
@@ -53,43 +53,43 @@ export class ActionInstance<
 
 export abstract class PluginAction<
     Settings extends object = object,
-    GlobalSettings extends object = object,
+    State extends object = object,
     Payload extends object = object,
-    State extends object = object
+    GlobalSettings extends object = object
 > extends AbstractAction<
     ReceiveEvent<Settings, GlobalSettings, Payload>,
     SendEvent<Settings, GlobalSettings, Payload>,
     GlobalSettings
 >
 {
-    private contextInstance = new Map<string, ActionInstance<Settings, GlobalSettings, Payload, State>>()
+    private contextInstance = new Map<string, ActionInstance<Settings, State, Payload, GlobalSettings>>()
 
     constructor(uuid: string) {
         super(uuid)
     }
 
-    forEachInstance(f: (instance: ActionInstance<Settings, GlobalSettings, Payload, State>) => void) {
+    forEachInstance(f: (instance: ActionInstance<Settings, State, Payload, GlobalSettings>) => void) {
         this.contextInstance.forEach(instance => f(instance))
     }
 
-    instance(context: string): ActionInstance<Settings, GlobalSettings, Payload, State> | undefined {
+    instance(context: string): ActionInstance<Settings, State, Payload, GlobalSettings> | undefined {
         return this.contextInstance.get(context)
     }
 
-    protected deriveState(settings: Settings, instance?: ActionInstance<Settings, GlobalSettings, Payload, State>): State | undefined {
+    protected deriveState(settings: Settings, instance?: ActionInstance<Settings, State, Payload, GlobalSettings>): State | undefined {
         return undefined
     }
 
     protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>): void {
-        const withInstance = (context: string, settings: Settings, f: (instance: ActionInstance<Settings, GlobalSettings, Payload, State>) => void) => {
+        const withInstance = (context: string, settings: Settings, f: (instance: ActionInstance<Settings, State, Payload, GlobalSettings>) => void) => {
             let instance = this.contextInstance.get(context)
             if (!instance) {
-                instance = new ActionInstance(this, context, settings, this.deriveState(settings))
+                instance = new ActionInstance(this, context, settings, this.deriveState(settings) ?? {} as State)
                 this.contextInstance.set(context, instance)
             }
             f(instance)
         }
-        const withExistingInstance = (context: string, f: (instance: ActionInstance<Settings, GlobalSettings, Payload, State>) => void) => {
+        const withExistingInstance = (context: string, f: (instance: ActionInstance<Settings, State, Payload, GlobalSettings>) => void) => {
             const instance = this.contextInstance.get(context)
             if (instance) f(instance)
         }
@@ -156,39 +156,39 @@ export abstract class PluginAction<
         // no default implementation
     }
 
-    protected onDidReceiveSettings(instance: ActionInstance<Settings, GlobalSettings, Payload, State>, settings: Settings, prevSettings: Settings) {
+    protected onDidReceiveSettings(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, settings: Settings, prevSettings: Settings) {
         const state = this.deriveState(settings, instance)
     }
 
-    protected onKeyDown(instance: ActionInstance<Settings, GlobalSettings, Payload, State>, payload: KeyEvent<Settings>["payload"]) {
+    protected onKeyDown(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: KeyEvent<Settings>["payload"]) {
         // no default implementation
     }
 
-    protected onKeyUp(instance: ActionInstance<Settings, GlobalSettings, Payload, State>, payload: KeyEvent<Settings>["payload"]) {
+    protected onKeyUp(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: KeyEvent<Settings>["payload"]) {
         // no default implementation
     }
 
-    protected onWillAppear(instance: ActionInstance<Settings, GlobalSettings, Payload, State>, payload: AppearanceEvent<Settings>["payload"]) {
+    protected onWillAppear(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: AppearanceEvent<Settings>["payload"]) {
         // no default implementation
     }
 
-    protected onWillDisappear(instance: ActionInstance<Settings, GlobalSettings, Payload, State>, payload: AppearanceEvent<Settings>["payload"]) {
+    protected onWillDisappear(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: AppearanceEvent<Settings>["payload"]) {
         this.contextInstance.delete(instance.context)
     }
 
-    protected onTitleParametersDidChange(instance: ActionInstance<Settings, GlobalSettings, Payload, State>, payload: TitleParametersDidChangeEvent<Settings>["payload"]) {
+    protected onTitleParametersDidChange(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: TitleParametersDidChangeEvent<Settings>["payload"]) {
         // no default implementation
     }
 
-    protected onPropertyInspectorDidAppear(instance: ActionInstance<Settings, GlobalSettings, Payload, State>) {
+    protected onPropertyInspectorDidAppear(instance: ActionInstance<Settings, State, Payload, GlobalSettings>) {
         // no default implementation
     }
 
-    protected onPropertyInspectorDidDisappear(instance: ActionInstance<Settings, GlobalSettings, Payload, State>) {
+    protected onPropertyInspectorDidDisappear(instance: ActionInstance<Settings, State, Payload, GlobalSettings>) {
         // no default implementation
     }
 
-    protected onSendToPlugin(instance: ActionInstance<Settings, GlobalSettings, Payload, State>, payload: Payload) {
+    protected onSendToPlugin(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: Payload) {
         // no default implementation
     }
 }
