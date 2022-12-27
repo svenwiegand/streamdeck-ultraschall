@@ -17,9 +17,9 @@ class SubscribeContext<Settings extends object> {
 export abstract class OscAction<
     Settings extends object = object,
     State extends object = object,
-    Payload extends object = object,
-    GlobalSettings extends object = object
-> extends PluginAction<Settings, State, Payload, GlobalSettings> {
+    GlobalSettings extends object = object,
+    Payload extends object = object
+> extends PluginAction<Settings, State, GlobalSettings, Payload> {
     protected readonly osc: Osc
     private readonly subscribers = new Map<string, SubscribeContext<Settings>>()
 
@@ -28,7 +28,7 @@ export abstract class OscAction<
         this.osc = osc
     }
 
-    protected subscribeOsc(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, address: string) {
+    protected subscribeOsc(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, address: string) {
         let subscriber = this.subscribers.get(instance.context)
         if (!subscriber) {
             subscriber = new SubscribeContext(this, instance)
@@ -36,14 +36,14 @@ export abstract class OscAction<
         this.osc.addListener(address, subscriber.listener)
     }
 
-    protected unsubscribeOsc(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, address: string) {
+    protected unsubscribeOsc(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, address: string) {
         const subscriber = this.subscribers.get(instance.context)
         if (subscriber) {
             this.osc.removeListener(address, subscriber.listener)
         }
     }
 
-    public onOscMessage(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, msg: Message) {
+    public onOscMessage(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, msg: Message) {
         // no default implementation
     }
 
@@ -69,7 +69,7 @@ export abstract class OscAction<
         return undefined
     }
 
-    protected onWillAppear(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: AppearanceEvent<Settings>["payload"]) {
+    protected onWillAppear(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, payload: AppearanceEvent<Settings>["payload"]) {
         super.onWillAppear(instance, payload)
 
         const title = this.instanceTitle(payload.settings)
@@ -83,7 +83,7 @@ export abstract class OscAction<
         }
     }
 
-    protected onDidReceiveSettings(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, settings: Settings, prevSettings: Settings) {
+    protected onDidReceiveSettings(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, settings: Settings, prevSettings: Settings) {
         super.onDidReceiveSettings(instance, settings, prevSettings)
 
         const title = this.instanceTitle(settings)
@@ -103,7 +103,7 @@ export abstract class OscAction<
         }
     }
 
-    protected onWillDisappear(instance: ActionInstance<Settings, State, Payload, GlobalSettings>, payload: AppearanceEvent<Settings>["payload"]) {
+    protected onWillDisappear(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, payload: AppearanceEvent<Settings>["payload"]) {
         super.onWillDisappear(instance, payload)
         const address = this.instanceOscSubscribeAddress(payload.settings)
         if (address) {
