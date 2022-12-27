@@ -47,6 +47,46 @@ export class ActionInstance<
             payload: {image, state, target}
         })
     }
+
+    showAlert() {
+        this.action.sendEvent({
+            event: "showAlert",
+            context: this.context,
+        })
+    }
+
+    showOk() {
+        this.action.sendEvent({
+            event: "showOk",
+            context: this.context,
+        })
+    }
+
+    setState(state: number) {
+        this.action.sendEvent({
+            event: "setState",
+            context: this.context,
+            payload: {state}
+        })
+    }
+
+    switchToProfile(device: string, profile: string) {
+        this.action.sendEvent({
+            event: "switchToProfile",
+            context: this.context,
+            device,
+            payload: {profile}
+        })
+    }
+
+    sendToPropertyInspector(payload: Payload) {
+        this.action.sendEvent({
+            event: "sendToPropertyInspector",
+            context: this.context,
+            action: this.action.uuid,
+            payload
+        })
+    }
 }
 
 import {AbstractAction} from "../common/Action"
