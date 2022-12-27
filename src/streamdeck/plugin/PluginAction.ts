@@ -192,29 +192,3 @@ export abstract class PluginAction<
         // no default implementation
     }
 }
-
-type EventHandler<
-    Settings extends object = object,
-    GlobalSettings extends object = object,
-    Payload extends object = object
-> = (
-    event: ReceiveEvent<Settings, GlobalSettings, Payload>,
-    action: PluginAction<Settings, GlobalSettings, Payload>
-) => void
-
-export class SimplePluginAction<
-    Settings extends object = object,
-    GlobalSettings extends object = object,
-    Payload extends object = object
-> extends PluginAction<Settings, GlobalSettings, Payload> {
-    private readonly eventHandler: EventHandler<Settings, GlobalSettings, Payload>
-
-    constructor(uuid: string, eventHandler: EventHandler<Settings, GlobalSettings, Payload>) {
-        super(uuid)
-        this.eventHandler = eventHandler
-    }
-
-    protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>): void {
-        this.eventHandler?.(event, this)
-    }
-}
