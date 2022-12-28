@@ -11,21 +11,27 @@ export interface InspectorProps<Settings extends object> {
 }
 
 export abstract class ReactActionInspector<
-    Props extends object,
     Settings extends object,
     Payload extends object = object
 > extends ActionInspector<Settings, GlobalSettings, Payload> {
-    protected readonly component: FunctionComponent<Props>
+    protected readonly component: FunctionComponent<InspectorProps<Settings>>
 
     constructor(
         uuid: string,
-        component: FunctionComponent<Props>
+        component: FunctionComponent<InspectorProps<Settings>>
     ) {
         super(uuid)
         this.component = component
     }
 
-    protected abstract props(settings: Settings): Props
+    protected props(settings: Settings): InspectorProps<Settings> {
+        const onSettingsChange = (settings: Settings) => this.setSettings(settings)
+        return {
+            settings,
+            onSettingsChange,
+            inspector: this
+        }
+    }
 
     render(settings: Settings) {
         const props = this.props(settings)

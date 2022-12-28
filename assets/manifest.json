@@ -27,6 +27,20 @@
           "FontSize": 12
         }
       ]
+    },
+    {
+      "Icon": "images/action-marker",
+      "Name": "Marker",
+      "SupportedInMultiActions": true,
+      "Tooltip": "",
+      "UUID": "de.sven-wiegand.ultraschall.marker",
+      "States": [
+        {
+          "Image": "images/key-marker-chapter",
+          "TitleAlignment": "bottom",
+          "FontSize": 12
+        }
+      ]
     }
   ],
   "Category": "Ultraschall (OSC)",

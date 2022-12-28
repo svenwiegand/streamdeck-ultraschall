@@ -6,6 +6,7 @@ import {GlobalSettings, globalSettingsDefault} from "common/actions/global"
 import {DidReceiveGlobalSettingsEvent} from "streamdeck/common/events"
 import {MuteAction} from "./actions/MuteAction"
 import {RecordAction} from "./actions/RecordAction"
+import {MarkerAction} from "./actions/MarkerAction"
 
 initLogging()
 console.log(new Date())
@@ -33,5 +34,8 @@ plugin.on("applicationDidTerminate", () => {
     osc.close()
 })
 
-plugin.registerAction(new RecordAction(osc))
-plugin.registerAction(new MuteAction(osc))
+plugin.registerAction(
+    new MarkerAction(osc),
+    new MuteAction(osc),
+    new RecordAction(osc),
+)

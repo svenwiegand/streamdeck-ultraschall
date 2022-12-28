@@ -23,17 +23,8 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
     )
 }
 
-export class RecordInspector extends ReactActionInspector<Props, Settings> {
+export class RecordInspector extends ReactActionInspector<Settings> {
     constructor() {
         super(actionId, PropertyInspector)
-    }
-
-    protected props(settings: Settings): Props {
-        const onSettingsChange = (s: Settings) => this.setSettings(s)
-        return {
-            settings,
-            onSettingsChange,
-            inspector: this,
-        }
     }
 }

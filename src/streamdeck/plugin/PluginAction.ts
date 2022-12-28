@@ -6,6 +6,8 @@ import {
     SendEvent,
     TitleParametersDidChangeEvent
 } from "./events"
+import {AbstractAction} from "../common/Action"
+
 export class ActionInstance<
     Settings extends object = object,
     State extends object = object,
@@ -98,8 +100,6 @@ export class ActionInstance<
     }
 }
 
-import {AbstractAction} from "../common/Action"
-
 export abstract class PluginAction<
     Settings extends object = object,
     State extends object = object,
@@ -111,10 +111,12 @@ export abstract class PluginAction<
     GlobalSettings
 >
 {
-    private contextInstance = new Map<string, ActionInstance<Settings, State, GlobalSettings, Payload>>()
+    private readonly _defaultSettings?: Settings
+    private readonly contextInstance = new Map<string, ActionInstance<Settings, State, GlobalSettings, Payload>>()
 
-    constructor(uuid: string) {
+    constructor(uuid: string, defaultSettings?: Settings) {
         super(uuid)
+        this._defaultSettings = defaultSettings
     }
 
     forEachInstance(f: (instance: ActionInstance<Settings, State, GlobalSettings, Payload>) => void) {
@@ -127,6 +129,10 @@ export abstract class PluginAction<
 
     instance(context: string): ActionInstance<Settings, State, GlobalSettings, Payload> | undefined {
         return this.contextInstance.get(context)
+    }
+
+    protected defaultSettings(): Settings | undefined {
+        return this._defaultSettings
     }
 
     protected deriveState(settings: Settings, instance?: ActionInstance<Settings, State, GlobalSettings, Payload>): State | undefined {
@@ -222,7 +228,13 @@ export abstract class PluginAction<
     }
 
     protected onWillAppear(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, payload: AppearanceEvent<Settings>["payload"]) {
-        // no default implementation
+        if (Object.keys(payload.settings).length === 0) {
+            const s = this.defaultSettings()
+            if (s) {
+                instance.setSettings(s)
+                this.onDidReceiveSettings(instance, s, payload.settings)
+            }
+        }
     }
 
     protected onWillDisappear(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, payload: AppearanceEvent<Settings>["payload"]) {

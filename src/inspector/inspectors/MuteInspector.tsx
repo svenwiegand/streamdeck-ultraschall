@@ -47,17 +47,8 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
     )
 }
 
-export class MuteInspector extends ReactActionInspector<Props, Settings> {
+export class MuteInspector extends ReactActionInspector<Settings> {
     constructor() {
         super(actionId, PropertyInspector)
-    }
-
-    protected props(settings: Settings): Props {
-        const onSettingsChange = (settings: Settings) => this.setSettings(settings)
-        return {
-            settings,
-            onSettingsChange,
-            inspector: this
-        }
     }
 }

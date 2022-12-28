@@ -23,8 +23,8 @@ export abstract class OscAction<
     protected readonly osc: Osc
     private readonly subscribers = new Map<string, SubscribeContext<Settings>>()
 
-    protected constructor(uuid: string, osc: Osc) {
-        super(uuid)
+    protected constructor(uuid: string, osc: Osc, defaultSettings?: Settings) {
+        super(uuid, defaultSettings)
         this.osc = osc
     }
 
@@ -60,34 +60,29 @@ export abstract class OscAction<
 
     /**
      * Returns title to automatically show on the instance's key with the provided settings
-     * or `undefined` if no automatic subscription is needed.
-     *
-     * If an address is returned `OscAction` will automatically care for subscribing and unsubscribing when
-     * the instance is created, destroyed or it's settings are changing.
+     * or `undefined` if no title should be shown automatically.
      */
     protected instanceTitle(settings: Settings): string | undefined {
         return undefined
     }
 
+    /**
+     * Returns image to automatically show on the instance's key with the provided settings
+     * or `undefined` if no image should be shown automatically.
+     */
+    protected instanceImage(settings: Settings): string | undefined {
+        return undefined
+    }
+
     protected onWillAppear(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, payload: AppearanceEvent<Settings>["payload"]) {
         super.onWillAppear(instance, payload)
-
-        const title = this.instanceTitle(payload.settings)
-        if (title) {
-            instance.setTitel(title)
-        }
-
+        this.updateKeyOnSettings(instance, payload.settings)
         this.resubscribeOsc(instance, payload.settings)
     }
 
     protected onDidReceiveSettings(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, settings: Settings, prevSettings: Settings) {
         super.onDidReceiveSettings(instance, settings, prevSettings)
-
-        const title = this.instanceTitle(settings)
-        if (title) {
-            instance.setTitel(title)
-        }
-
+        this.updateKeyOnSettings(instance, settings)
         this.resubscribeOsc(instance, settings, prevSettings)
     }
 
@@ -102,6 +97,17 @@ export abstract class OscAction<
         if (JSON.stringify(newAddresses) !== JSON.stringify(prevAddresses)) {
             prevAddresses.forEach(address => this.unsubscribeOsc(instance, address))
             newAddresses.forEach(address => this.subscribeOsc(instance, address))
+        }
+    }
+
+    private updateKeyOnSettings(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, settings: Settings) {
+        const title = this.instanceTitle(settings)
+        if (title) {
+            instance.setTitel(title)
+        }
+        const image = this.instanceImage(settings)
+        if (image) {
+            instance.setImage(image)
         }
     }
 }
