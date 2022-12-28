@@ -1,25 +1,24 @@
 import * as React from "react"
-import {SDTextInput} from "react-streamdeck"
-import {actionId, Settings} from "common/actions/transport"
+import {actionId, Settings} from "common/actions/record"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
-import {ReactActionInspector} from "./ReactActionInspector"
+import {InspectorProps, ReactActionInspector} from "./ReactActionInspector"
 
-interface Props {
-    name?: string
-    onNameChange: (name: string) => void
-    inspector: RecordInspector
-}
+type Props = InspectorProps<Settings>
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
-    const [name, setName] = React.useState(props.name ?? "Sven")
-    const onNameChange = (e: React.FormEvent<HTMLInputElement>) => {
-        setName(e.currentTarget.value)
-        props.onNameChange?.(e.currentTarget.value)
+    const [settings, setSettings] = React.useState(props.settings)
+    const onShowTimeChange = (e: React.FormEvent<HTMLInputElement>) => {
+        const s = {showTime: e.currentTarget.checked}
+        setSettings(s)
+        props.onSettingsChange(s)
     }
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
-            <SDTextInput value={name} label={"Your name"} onChange={onNameChange} />
-            <div>{name}</div>
+            <div className="sdpi-item" {...{type:"checkbox"}}>
+                <div className="sdpi-item-label">Display</div>
+                <input id="showTitle" className="sdpi-item-value" type="checkbox" checked={settings.showTime} onChange={onShowTimeChange}/>
+                <label {...{for:"showTitle"}}><span/>Show recording time</label>
+            </div>
         </InspectorWithGlobalSettings>
     )
 }
@@ -30,10 +29,10 @@ export class RecordInspector extends ReactActionInspector<Props, Settings> {
     }
 
     protected props(settings: Settings): Props {
-        const onNameChange = (name: string) => this.setSettings({name})
+        const onSettingsChange = (s: Settings) => this.setSettings(s)
         return {
-            name: settings.name,
-            onNameChange,
+            settings,
+            onSettingsChange,
             inspector: this,
         }
     }

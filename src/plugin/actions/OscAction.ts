@@ -48,14 +48,14 @@ export abstract class OscAction<
     }
 
     /**
-     * Returns OSC address to automatically subscribe the instance with the provided settings for
-     * or `undefined` if no automatic subscription is needed.
+     * Returns OSC addresses to automatically subscribe the instance with the provided settings for
+     * or an empty array if no automatic subscription is needed.
      *
-     * If an address is returned `OscAction` will automatically care for subscribing and unsubscribing when
+     * If at least one address is returned `OscAction` will automatically care for subscribing and unsubscribing when
      * the instance is created, destroyed or it's settings are changing.
      */
-    protected instanceOscSubscribeAddress(settings: Settings): string | undefined {
-        return undefined
+    protected instanceOscSubscribeAddresses(settings: Settings): string[] {
+        return []
     }
 
     /**
@@ -77,10 +77,7 @@ export abstract class OscAction<
             instance.setTitel(title)
         }
 
-        const address = this.instanceOscSubscribeAddress(payload.settings)
-        if (address) {
-            this.subscribeOsc(instance, address)
-        }
+        this.resubscribeOsc(instance, payload.settings)
     }
 
     protected onDidReceiveSettings(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, settings: Settings, prevSettings: Settings) {
@@ -91,23 +88,20 @@ export abstract class OscAction<
             instance.setTitel(title)
         }
 
-        const prevAddress = this.instanceOscSubscribeAddress(prevSettings)
-        const newAddress = this.instanceOscSubscribeAddress(settings)
-        if (newAddress !== prevAddress) {
-            if (prevAddress) {
-                this.unsubscribeOsc(instance, prevAddress)
-            }
-            if (newAddress) {
-                this.subscribeOsc(instance, newAddress)
-            }
-        }
+        this.resubscribeOsc(instance, settings, prevSettings)
     }
 
     protected onWillDisappear(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, payload: AppearanceEvent<Settings>["payload"]) {
         super.onWillDisappear(instance, payload)
-        const address = this.instanceOscSubscribeAddress(payload.settings)
-        if (address) {
-            this.unsubscribeOsc(instance, address)
+        this.resubscribeOsc(instance, undefined, payload.settings)
+    }
+
+    private resubscribeOsc(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, settings?: Settings, prevSettings?: Settings) {
+        const newAddresses = settings ? this.instanceOscSubscribeAddresses(settings) : []
+        const prevAddresses = prevSettings ? this.instanceOscSubscribeAddresses(prevSettings) : []
+        if (JSON.stringify(newAddresses) !== JSON.stringify(prevAddresses)) {
+            prevAddresses.forEach(address => this.unsubscribeOsc(instance, address))
+            newAddresses.forEach(address => this.subscribeOsc(instance, address))
         }
     }
 }

@@ -4,6 +4,12 @@ import * as React from "react"
 import {FunctionComponent} from "react"
 import * as ReactDOM from "react-dom"
 
+export interface InspectorProps<Settings extends object> {
+    settings: Settings
+    onSettingsChange: (settings: Settings) => void
+    inspector: ActionInspector<Settings, GlobalSettings>
+}
+
 export abstract class ReactActionInspector<
     Props extends object,
     Settings extends object,

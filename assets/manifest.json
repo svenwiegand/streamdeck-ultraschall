@@ -1,18 +1,18 @@
 {
   "Actions": [
     {
-      "Icon": "images/action1.icon",
-      "Name": "Transport",
+      "Icon": "images/action-record",
+      "Name": "Record",
       "States": [
         {
-          "Image": "images/action1.key",
-          "TitleAlignment": "middle",
-          "FontSize": "15"
+          "Image": "images/key-record",
+          "TitleAlignment": "bottom",
+          "FontSize": 12
         }
       ],
       "SupportedInMultiActions": false,
       "Tooltip": "",
-      "UUID": "de.sven-wiegand.ultraschall.transport"
+      "UUID": "de.sven-wiegand.ultraschall.record"
     },
     {
       "Icon": "images/action-mute",

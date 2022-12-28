@@ -1,15 +1,9 @@
 import * as React from "react"
 import {actionId, Settings} from "common/actions/mute"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
-import {GlobalSettings} from "common/actions/global"
-import {ReactActionInspector} from "./ReactActionInspector"
-import {ActionInspector} from "streamdeck/inspector/ActionInspector"
+import {InspectorProps, ReactActionInspector} from "./ReactActionInspector"
 
-interface Props {
-    settings: Settings
-    onSettingsChange: (settings: Settings) => void
-    inspector: ActionInspector<Settings, GlobalSettings>
-}
+type Props = InspectorProps<Settings>
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
     const [settings, setSettings] = React.useState(props.settings)
