@@ -19,17 +19,15 @@ export class MuteAction extends OscAction<Settings, State> {
         super(actionId, osc)
     }
 
+    protected defaultSettings(): Settings | undefined {
+        const usedTracks = this.mapInstances(i => i.settings.track).filter(track => !!track)
+        const maxTrack = usedTracks.length > 0 ? Math.max(...usedTracks) : 0
+        const nextTrack = maxTrack < 10 ? maxTrack + 1 : 1
+        return {track: nextTrack, mode: "toggle"}
+    }
+
     protected onWillAppear(instance: Instance, payload: AppearanceEvent<Settings>["payload"]) {
         super.onWillAppear(instance, payload)
-        if (!("track" in payload.settings)) {
-            const usedTracks = this.mapInstances(i => i.settings.track).filter(track => !!track)
-            const maxTrack = usedTracks.length > 0 ? Math.max(...usedTracks) : 0
-            const nextTrack = maxTrack < 10 ? maxTrack + 1 : 1
-            const settings: Settings = {track: nextTrack, mode: "toggle"}
-            const prevSettings = instance.settings
-            instance.setSettings(settings)
-            this.onDidReceiveSettings(instance, settings, prevSettings)
-        }
         this.mute(instance, payload.settings.mode === "pushToTalk")
     }
 
