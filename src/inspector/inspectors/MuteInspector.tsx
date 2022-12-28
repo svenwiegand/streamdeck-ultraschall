@@ -13,7 +13,7 @@ interface Props {
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
     const [track, setTrack] = React.useState(props.track ?? 1)
-    const onTrackChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const onTrackChange = (e: React.FormEvent<HTMLSelectElement>) => {
         const newTrack = Number(e.currentTarget.value)
         setTrack(newTrack)
         props.onTrackChange(newTrack)
@@ -21,8 +21,19 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
             <div className="sdpi-item">
-                <div className="sdpi-item-label">Track (1-9)</div>
-                <input type="number" className="sdpi-item-value" value={track} onChange={onTrackChange}/>
+                <div className="sdpi-item-label">Track</div>
+                <select className="sdpi-item-value" value={track} onChange={onTrackChange}>
+                    <option value="1">Track 1</option>
+                    <option value="2">Track 2</option>
+                    <option value="3">Track 3</option>
+                    <option value="4">Track 4</option>
+                    <option value="5">Track 5</option>
+                    <option value="6">Track 6</option>
+                    <option value="7">Track 7</option>
+                    <option value="8">Track 8</option>
+                    <option value="9">Track 9</option>
+                    <option value="10">Track 10</option>
+                </select>
             </div>
         </InspectorWithGlobalSettings>
     )

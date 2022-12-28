@@ -32,6 +32,15 @@ export class ActionInstance<
         return this._settings
     }
 
+    setSettings(settings: Settings) {
+        this.action.sendEvent({
+            event: "setSettings",
+            context: this.context,
+            payload: settings,
+        })
+        this._settings = settings
+    }
+
     setTitel(title: string, state?: number, target?: "software" | "hardware" | "both") {
         this.action.sendEvent({
             event: "setTitle",
@@ -110,6 +119,10 @@ export abstract class PluginAction<
 
     forEachInstance(f: (instance: ActionInstance<Settings, State, GlobalSettings, Payload>) => void) {
         this.contextInstance.forEach(instance => f(instance))
+    }
+
+    mapInstances<R>(f: (instance: ActionInstance<Settings, State, GlobalSettings, Payload>) => R): R[] {
+        return Array.from(this.contextInstance.values()).map(f)
     }
 
     instance(context: string): ActionInstance<Settings, State, GlobalSettings, Payload> | undefined {
