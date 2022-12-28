@@ -6,23 +6,29 @@ import {ReactActionInspector} from "./ReactActionInspector"
 import {ActionInspector} from "streamdeck/inspector/ActionInspector"
 
 interface Props {
-    track?: number
-    onTrackChange: (track: number) => void
+    settings: Settings
+    onSettingsChange: (settings: Settings) => void
     inspector: ActionInspector<Settings, GlobalSettings>
 }
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
-    const [track, setTrack] = React.useState(props.track ?? 1)
+    const [settings, setSettings] = React.useState(props.settings)
+    const updateSettings = (s: Settings) => {
+        setSettings(s)
+        props.onSettingsChange(s)
+    }
     const onTrackChange = (e: React.FormEvent<HTMLSelectElement>) => {
-        const newTrack = Number(e.currentTarget.value)
-        setTrack(newTrack)
-        props.onTrackChange(newTrack)
+        const track = Number(e.currentTarget.value)
+        updateSettings({...settings, track})
+    }
+    const onModeChange = (e: React.FormEvent<HTMLSelectElement>) => {
+        updateSettings({...settings, mode: e.currentTarget.value as Settings["mode"]})
     }
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">Track</div>
-                <select className="sdpi-item-value" value={track} onChange={onTrackChange}>
+                <select className="sdpi-item-value" value={settings.track} onChange={onTrackChange}>
                     <option value="1">Track 1</option>
                     <option value="2">Track 2</option>
                     <option value="3">Track 3</option>
@@ -35,6 +41,14 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
                     <option value="10">Track 10</option>
                 </select>
             </div>
+            <div className="sdpi-item">
+                <div className="sdpi-item-label">Mode</div>
+                <select className="sdpi-item-value" value={settings.mode} onChange={onModeChange}>
+                    <option value="toggle">Toggle</option>
+                    <option value="pushToMute">Push to mute</option>
+                    <option value="pushToTalk">Push to talk</option>
+                </select>
+            </div>
         </InspectorWithGlobalSettings>
     )
 }
@@ -45,10 +59,10 @@ export class MuteInspector extends ReactActionInspector<Props, Settings> {
     }
 
     protected props(settings: Settings): Props {
-        const onTrackChange = (track: number) => this.setSettings({track})
+        const onSettingsChange = (settings: Settings) => this.setSettings(settings)
         return {
-            track: settings.track,
-            onTrackChange,
+            settings,
+            onSettingsChange,
             inspector: this
         }
     }

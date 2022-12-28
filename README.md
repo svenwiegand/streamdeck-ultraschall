@@ -7,15 +7,15 @@ In contrast to [Ultraschall's official stream deck plugin](https://github.com/Ul
 
 Here is the full list of actions supported:
 
-- Start/stop record
-- Record feedback (recording, current time) for other participants e.g. with smaller stream deck
-- Mute keys for each track using one of these modes
-  - Toggle mute
-  - Push to mute
-  - Push to talk
-- Set marker (chapter mark or edit mark)
-- Trigger soundboard clip including visual feedback of the remaining time and option for fade-in, fade-out
-- Duck soundboard (decrease soundboard volume to talk over background music)
+- [ ] Start/stop record
+- [ ] Record feedback (recording, current time) for other participants e.g. with smaller stream deck
+- [x] Mute keys for each track using one of these modes
+  - [x] Toggle mute
+  - [x] Push to mute
+  - [x] Push to talk
+- [ ] Set marker (chapter mark or edit mark)
+- [ ] Trigger soundboard clip including visual feedback of the remaining time and option for fade-in, fade-out
+- [ ] Duck soundboard (decrease soundboard volume to talk over background music)
 
 ## Technical Stuff
 To make the feedback stuff possible, this plugin uses OSC for communication with Reaper and Ultraschall. To make OSC communication work, we cannot use the standard stream deck JavaScript API, because the plugin would run in a browser environment which would not allow us to establish UDP connections. 
