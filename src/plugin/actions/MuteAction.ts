@@ -5,8 +5,8 @@ import {AppearanceEvent, KeyEvent} from "streamdeck/plugin/events"
 import {OscAction} from "./OscAction"
 import iconMute from "assets/images/key-mute.svg"
 import iconMuted from "assets/images/key-muted.svg"
-import iconTalk from "assets/images/key-unmute.svg"
-import iconTalking from "assets/images/key-unmuted.svg"
+import iconTalk from "assets/images/key-talk.svg"
+import iconTalking from "assets/images/key-talking.svg"
 
 interface State {
     muted: boolean
