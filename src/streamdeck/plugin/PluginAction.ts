@@ -17,7 +17,7 @@ export class ActionInstance<
     readonly action: PluginAction<Settings, State, GlobalSettings, Payload>
     readonly context: string
     _settings: Settings
-    state?: State
+    state: State
 
     constructor(action: PluginAction<Settings, State, GlobalSettings, Payload>, context: string, settings: Settings, state: State) {
         this.action = action
@@ -135,15 +135,15 @@ export abstract class PluginAction<
         return this._defaultSettings
     }
 
-    protected deriveState(settings: Settings, instance?: ActionInstance<Settings, State, GlobalSettings, Payload>): State | undefined {
-        return undefined
+    protected deriveState(settings: Settings, instance?: ActionInstance<Settings, State, GlobalSettings, Payload>): State {
+        return {} as State
     }
 
     protected onEvent(event: ReceiveEvent<Settings, GlobalSettings, Payload>): void {
         const withInstance = (context: string, settings: Settings, f: (instance: ActionInstance<Settings, State, GlobalSettings, Payload>) => void) => {
             let instance = this.contextInstance.get(context)
             if (!instance) {
-                instance = new ActionInstance(this, context, settings, this.deriveState(settings) ?? {} as State)
+                instance = new ActionInstance(this, context, settings, this.deriveState(settings))
                 this.contextInstance.set(context, instance)
             }
             f(instance)

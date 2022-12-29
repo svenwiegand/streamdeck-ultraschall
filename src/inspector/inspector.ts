@@ -3,6 +3,7 @@ import {initLogging} from "common/logging"
 import {RecordInspector} from "./inspectors/RecordInspector"
 import {MuteInspector} from "./inspectors/MuteInspector"
 import {MarkerInspector} from "./inspectors/MarkerInspector"
+import {SoundboardPlayerInspector} from "./inspectors/SoundboardPlayInspector"
 
 export default function connectElgatoStreamDeckSocket(
     inPort: number,
@@ -16,5 +17,6 @@ export default function connectElgatoStreamDeckSocket(
         new MarkerInspector(),
         new MuteInspector(),
         new RecordInspector(),
+        new SoundboardPlayerInspector(),
     )
 }

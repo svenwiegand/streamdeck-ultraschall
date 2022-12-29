@@ -41,6 +41,19 @@
           "FontSize": 12
         }
       ]
+    },
+    {
+      "Icon": "images/action-soundboard-play",
+      "Name": "Soundboard",
+      "SupportedInMultiActions": false,
+      "Tooltip": "",
+      "UUID": "de.sven-wiegand.ultraschall.soundboard.play",
+      "States": [
+        {
+          "TitleAlignment": "bottom",
+          "FontSize": 12
+        }
+      ]
     }
   ],
   "Category": "Ultraschall (OSC)",

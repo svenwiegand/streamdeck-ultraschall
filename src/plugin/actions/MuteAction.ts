@@ -31,12 +31,12 @@ export class MuteAction extends OscAction<Settings, State> {
         this.mute(instance, payload.settings.mode === "pushToTalk")
     }
 
-    protected onDidReceiveSettings(instance: ActionInstance<Settings, State, object, object>, settings: Settings, prevSettings: Settings) {
+    protected onDidReceiveSettings(instance: Instance, settings: Settings, prevSettings: Settings) {
         super.onDidReceiveSettings(instance, settings, prevSettings)
         this.mute(instance, settings.mode === "pushToTalk")
     }
 
-    protected deriveState(settings: Settings, instance?: Instance): State | undefined {
+    protected deriveState(settings: Settings, instance?: Instance): State {
         return {
             muted: false
         }
@@ -49,13 +49,13 @@ export class MuteAction extends OscAction<Settings, State> {
     protected onKeyDown(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
         super.onKeyDown(instance, payload)
         switch (payload.settings.mode) {
-            case "toggle": return this.mute(instance, !instance.state?.muted)
+            case "toggle": return this.mute(instance, !instance.state.muted)
             case "pushToMute": return this.mute(instance, true)
             case "pushToTalk": return this.mute(instance, false)
         }
     }
 
-    protected onKeyUp(instance: ActionInstance<Settings, State, object, object>, payload: KeyEvent<Settings>["payload"]) {
+    protected onKeyUp(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
         super.onKeyUp(instance, payload)
         switch (payload.settings.mode) {
             case "toggle": break

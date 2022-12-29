@@ -7,6 +7,7 @@ import {DidReceiveGlobalSettingsEvent} from "streamdeck/common/events"
 import {MuteAction} from "./actions/MuteAction"
 import {RecordAction} from "./actions/RecordAction"
 import {MarkerAction} from "./actions/MarkerAction"
+import {SoundboardPlayAction} from "./actions/SoundboardPlayAction"
 
 initLogging()
 console.log(new Date())
@@ -38,4 +39,5 @@ plugin.registerAction(
     new MarkerAction(osc),
     new MuteAction(osc),
     new RecordAction(osc),
+    new SoundboardPlayAction(osc),
 )
