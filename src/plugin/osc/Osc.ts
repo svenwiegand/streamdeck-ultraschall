@@ -34,7 +34,9 @@ export class Osc {
     }
 
     send(address: string, ...args: ArgumentType[]) {
-        this.port?.send({ address, args })
+        const msg = {address, args}
+        console.debug(msg)
+        this.port?.send(msg)
     }
 
     addListener(address: string, handle: (msg: Message) => void) {

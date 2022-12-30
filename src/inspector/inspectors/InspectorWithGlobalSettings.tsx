@@ -77,6 +77,7 @@ export const InspectorWithGlobalSettings: React.FC<Props> = ({inspector, childre
     </>) : <></>
     return (<>
         {children}
+        <hr/>
         <details className="pointer">
             <summary>Global Settings</summary>
             {inputs}

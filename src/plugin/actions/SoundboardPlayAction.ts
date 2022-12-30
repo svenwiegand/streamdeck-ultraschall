@@ -6,11 +6,14 @@ import {KeyEvent} from "streamdeck/plugin/events"
 import {Message} from "../osc/typedOsc"
 
 interface State {
-    playing: boolean
+    state: "playing" | "paused" | "stopped" | "done"
+    secondaryState?: "fadingIn" | "fadingOut"
     progress: number
 }
 
 type Instance = ActionInstance<Settings, State>
+
+type Action = "play" | "pause" | "stop" | "fadeIn" | "fadeOut"
 
 export class SoundboardPlayAction extends OscAction<Settings, State> {
     constructor(osc: Osc) {
@@ -21,12 +24,16 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
         const usedPlayers = this.mapInstances(i => i.settings.player).filter(player => !!player)
         const maxPlayer = usedPlayers.length > 0 ? Math.max(...usedPlayers) : 0
         const nextPlayer = maxPlayer + 1
-        return {player: nextPlayer}
+        return {
+            player: nextPlayer,
+            startType: "play",
+            stopType: "stop",
+        }
     }
 
     protected deriveState(settings: Settings, instance?: Instance): State {
         return {
-            playing: false,
+            state: "stopped",
             progress: 0,
         }
     }
@@ -36,81 +43,149 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
     }
 
     protected instanceImage(settings: Settings): string | undefined {
-        return this.image(0, false)
+        return this.image({state: "stopped", progress: 0}, settings)
     }
 
     protected onKeyDown(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
         super.onKeyDown(instance, payload)
-        if (instance.state.playing) {
-            this.osc.send(`/ultraschall/soundboard/player/${instance.settings.player}/stop`, 1)
-        } else {
-            this.osc.send(`/ultraschall/soundboard/player/${instance.settings.player}/play`, 1)
+
+        const sendCommand = (command: "play" | "pause" | "stop" | "fadein" | "fadeout", arg = 1) => {
+            this.osc.send(`/ultraschall/soundboard/player/${instance.settings.player}/${command}`, arg)
+        }
+
+        switch (this.action(instance.state, instance.settings)) {
+            case "play": return sendCommand("play")
+            case "pause": return sendCommand("pause")
+            case "stop": return sendCommand("stop")
+            case "fadeIn": return sendCommand("fadein")
+            case "fadeOut": return sendCommand("fadeout")
         }
     }
 
     protected instanceOscSubscribeAddresses(settings: Settings): string[] {
         return [
             `/ultraschall/soundboard/player/${settings.player}/play`,
+            `/ultraschall/soundboard/player/${settings.player}/fadein`,
+            `/ultraschall/soundboard/player/${settings.player}/fadeout`,
+            `/ultraschall/soundboard/player/${settings.player}/pause`,
+            `/ultraschall/soundboard/player/${settings.player}/stop`,
+            `/ultraschall/soundboard/player/${settings.player}/done`,
             `/ultraschall/soundboard/player/${settings.player}/progress`,
         ]
     }
 
+    private action(state: State, settings: Settings): Action {
+        switch (state.state) {
+            case "playing": return state.secondaryState ? "stop" : settings.stopType
+            case "paused": return "stop" // due to a bug in ultraschall soundboard we cannot resume – just stop
+            case "stopped": return settings.startType
+            case "done": return settings.startType
+        }
+    }
+
     onOscMessage(instance: Instance, msg: Message) {
         super.onOscMessage(instance, msg)
+
+        const onStateMsg = (state: State["state"]) => {
+            if (msg.args?.[0] as number > 0) {
+                this.updateState(instance, state)
+            }
+        }
+
+        const onSecondaryStateMsg = (secondaryState: State["secondaryState"]) => {
+            this.updateSecondaryState(instance, msg.args?.[0] as number > 0 ? secondaryState : undefined)
+        }
+
         switch (msg.address) {
             case `/ultraschall/soundboard/player/${instance.settings.player}/play`:
-                return this.onPlay(instance, msg.args?.[0] as number > 0)
+                return onStateMsg("playing")
+            case `/ultraschall/soundboard/player/${instance.settings.player}/pause`:
+                return onStateMsg("paused")
+            case `/ultraschall/soundboard/player/${instance.settings.player}/stop`:
+                return onStateMsg("stopped")
+            case `/ultraschall/soundboard/player/${instance.settings.player}/done`:
+                return onStateMsg("done")
+            case `/ultraschall/soundboard/player/${instance.settings.player}/fadein`:
+                return onSecondaryStateMsg("fadingIn")
+            case `/ultraschall/soundboard/player/${instance.settings.player}/fadeout`:
+                return onSecondaryStateMsg("fadingOut")
             case `/ultraschall/soundboard/player/${instance.settings.player}/progress`:
                 return this.onProgress(instance, msg.args?.[0] as number)
         }
     }
 
-    private onPlay(instance: Instance, playing: boolean) {
-        instance.state.playing = playing
+    private updateState(instance: Instance, state: State["state"]) {
+        instance.state.state = state
+        this.updateImage(instance)
+    }
+
+    private updateSecondaryState(instance: Instance, secondaryState: State["secondaryState"]) {
+        instance.state.secondaryState = secondaryState
+        this.updateImage(instance)
     }
 
     private onProgress(instance: Instance, progress: number) {
         instance.state.progress = progress
-        instance.setImage(this.image(progress, instance.state.playing))
+        this.updateImage(instance)
     }
 
-    private image(progress: number, isPlaying: boolean) {
-        return `data:image/svg+xml;charset=utf8,${renderKey(progress, isPlaying ? iconStop : iconPlay)}`
+    private updateImage(instance: Instance) {
+        instance.setImage(this.image(instance.state, instance.settings))
+    }
+
+    private image(state: State, settings: Settings) {
+        return `data:image/svg+xml;charset=utf8,${renderKey(state.progress, this.action(state, settings))}`
     }
 }
 
 const colorInactive = "#a6a6a6"
-const colorActive = "#fff"
-const iconPlay = `<polygon 
-    points="64,48 88,64 64,80" 
-    stroke="${colorInactive}"
-    stroke-width="8"
-    stroke-linejoin="round"
-    fill="${colorInactive}"
-/>`
-const iconStop = `<polygon 
-    points="60,52 84,52 84,76 60,76" 
-    stroke="${colorActive}"
-    stroke-width="8"
-    stroke-linejoin="round"
-    fill="${colorActive}"
-/>`
-const iconPause = `<polygon 
-    points="60,52 64,52 64,76 60,76" 
-    stroke="${colorActive}"
-    stroke-width="8"
-    stroke-linejoin="round"
-    fill="${colorActive}"
-    />
-    <polygon 
-    points="80,52 84,52 84,76 80,76" 
-    stroke="${colorActive}"
-    stroke-width="8"
-    stroke-linejoin="round"
-    fill="${colorActive}"
-/>`
+const colorActive = "#a6a6a6"
+const actionIcon = {
+    play: `<polygon 
+        points="64,48 88,64 64,80" 
+        stroke="${colorInactive}"
+        stroke-width="8"
+        stroke-linejoin="round"
+        fill="${colorInactive}"
+    />`,
+    fadeIn: `<polygon 
+        points="60,76 84,52 84,76" 
+        stroke="${colorInactive}"
+        stroke-width="8"
+        stroke-linejoin="round"
+        fill="${colorInactive}"
+    />`,
+    stop: `<polygon 
+        points="60,52 84,52 84,76 60,76" 
+        stroke="${colorActive}"
+        stroke-width="8"
+        stroke-linejoin="round"
+        fill="${colorActive}"
+    />`,
+    pause: `<polygon 
+        points="60,52 64,52 64,76 60,76" 
+        stroke="${colorActive}"
+        stroke-width="8"
+        stroke-linejoin="round"
+        fill="${colorActive}"
+        />
+        <polygon 
+        points="80,52 84,52 84,76 80,76" 
+        stroke="${colorActive}"
+        stroke-width="8"
+        stroke-linejoin="round"
+        fill="${colorActive}"
+    />`,
+    fadeOut: `<polygon 
+        points="60,52 84,76 60,76" 
+        stroke="${colorActive}"
+        stroke-width="8"
+        stroke-linejoin="round"
+        fill="${colorActive}"
+    />`,
+}
 
-const renderKey = (progress: number, innerIcon: string) => {
+const renderKey = (progress: number, action: Action) => {
     const color = "#00a396"
     const strokeWidth = 8
     const r = 36
@@ -134,6 +209,6 @@ const renderKey = (progress: number, innerIcon: string) => {
             stroke-width="${strokeWidth}" 
             stroke-linecap="round"
         />
-        ${innerIcon}
+        ${actionIcon[action]}
     </svg>`
 }
