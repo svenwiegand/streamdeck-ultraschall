@@ -1,6 +1,5 @@
 import * as path from "path"
 import * as webpack from "webpack"
-import nodeExternals from "webpack-node-externals"
 import CopyPlugin from "copy-webpack-plugin"
 
 const isProduction = process.env.NODE_ENV == "production"
@@ -13,7 +12,6 @@ const pluginConfig: webpack.Configuration = {
         path: path.resolve(__dirname, outputPath),
         filename: "plugin.js",
     },
-    externals: [nodeExternals()],
     plugins: [
         new CopyPlugin({
             patterns: [
@@ -26,21 +24,12 @@ const pluginConfig: webpack.Configuration = {
             {
                 test: /\.(ts|tsx)$/i,
                 loader: "ts-loader",
-                include: [
-                    path.join(__dirname, 'assets/'),
-                    path.join(__dirname, 'src/common/'),
-                    path.join(__dirname, 'src/plugin/'),
-                    path.join(__dirname, 'src/streamdeck/'),
-                ],
                 exclude: ["/node_modules/"],
             },
             {
                 test: /\.svg$/i,
                 type: "asset/inline",
             },
-
-            // Add your rules for custom modules here
-            // Learn more about loaders from https://webpack.js.org/loaders/
         ],
     },
     resolve: {
@@ -71,16 +60,8 @@ const inspectorConfig: webpack.Configuration = {
             {
                 test: /\.(ts|tsx)$/i,
                 loader: "ts-loader",
-                include: [
-                    path.join(__dirname, 'src/common/'),
-                    path.join(__dirname, 'src/inspector/'),
-                    path.join(__dirname, 'src/streamdeck/'),
-                ],
                 exclude: ["/node_modules/"],
             },
-
-            // Add your rules for custom modules here
-            // Learn more about loaders from https://webpack.js.org/loaders/
         ],
     },
     resolve: {
