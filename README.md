@@ -13,7 +13,7 @@ Here is the full list of actions supported:
   - [x] Push to mute
   - [x] Push to talk
 - [x] Set marker (chapter mark or edit mark)
-- [ ] Trigger soundboard clip including visual feedback of the remaining time and option for fade-in, fade-out
+- [x] Trigger soundboard clip including visual feedback of the remaining time and option for fade-in, fade-out
 - [ ] Duck soundboard (decrease soundboard volume to talk over background music)
 
 ## Technical Stuff
