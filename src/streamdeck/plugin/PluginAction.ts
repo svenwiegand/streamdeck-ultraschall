@@ -43,7 +43,7 @@ export class ActionInstance<
         this._settings = settings
     }
 
-    setTitel(title: string, state?: number, target?: "software" | "hardware" | "both") {
+    setTitle(title?: string, state?: number, target?: "software" | "hardware" | "both") {
         this.action.sendEvent({
             event: "setTitle",
             context: this.context,

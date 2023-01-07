@@ -12,12 +12,19 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
         setSettings(newSettings)
         props.onSettingsChange(newSettings)
     }
-    const onPlayerChange = (e: React.FormEvent<HTMLInputElement>) => {
-        const player = Number(e.currentTarget.value)
-        if (!isNaN(player)) {
-            updateSettings({player})
+    const onInputChange = (onChange: (value: string) => Partial<Settings> | undefined) => {
+        return (e: React.FormEvent<HTMLInputElement>) => {
+            const settings = onChange(e.currentTarget.value)
+            if (settings) {
+                updateSettings(settings)
+            }
         }
     }
+    const onTitleChange = onInputChange(title => ({title: title.trim() === "" ? undefined : title}))
+    const onPlayerChange = onInputChange(input => {
+        const player = Number(input)
+        return isNaN(player) ? undefined : {player}
+    })
     const onSelectChange = (onChange: (value: string) => Partial<Settings>) => {
         return (e: React.FormEvent<HTMLSelectElement>) => {
             updateSettings(onChange(e.currentTarget.value))
@@ -27,6 +34,21 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
     const onStopTypeChange = onSelectChange(st => ({stopType: st as Settings["stopType"]}))
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
+            <div className="sdpi-item">
+                <div className="sdpi-item-label empty"/>
+                <details className="sdpi-item-value">
+                    <summary>If you want to see remaining time when soundboard is playing, leave the title above empty and use the below one.</summary>
+                </details>
+            </div>
+            <div className="sdpi-item">
+                <div className="sdpi-item-label">Title</div>
+                <input
+                    className="sdpi-item-value"
+                    type="text"
+                    value={settings.title ?? ""}
+                    onChange={onTitleChange}
+                />
+            </div>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">Player (1-99)</div>
                 <input

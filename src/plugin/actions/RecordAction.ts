@@ -17,7 +17,7 @@ export class RecordAction extends OscAction<Settings> {
     protected onDidReceiveSettings(instance: Instance, settings: Settings, prevSettings: Settings) {
         super.onDidReceiveSettings(instance, settings, prevSettings)
         if (!settings.showTime) {
-            instance.setTitel("")
+            instance.setTitle("")
         }
     }
 
@@ -38,7 +38,7 @@ export class RecordAction extends OscAction<Settings> {
         }
         const timeCode = msg.args?.[0] as string
         this.forEachInstance(instance => {
-            instance.setTitel(timeCode)
+            instance.setTitle(timeCode)
         })
     }
 
@@ -49,7 +49,7 @@ export class RecordAction extends OscAction<Settings> {
     private onTimeChange(instance: Instance, time: string) {
         if (instance.settings.showTime) {
             const timeWithoutMillis = time.split(".")[0]
-            instance.setTitel(timeWithoutMillis)
+            instance.setTitle(timeWithoutMillis)
         }
     }
 }

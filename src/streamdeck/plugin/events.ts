@@ -119,7 +119,7 @@ export type ReceiveEvent<
 export interface SetTitleEvent extends EventWithContext {
     event: "setTitle"
     payload: {
-        title: string
+        title?: string
         target?: "software" | "hardware" | "both"
         state?: number
     }

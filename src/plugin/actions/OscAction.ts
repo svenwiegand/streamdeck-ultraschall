@@ -103,7 +103,7 @@ export abstract class OscAction<
     private updateKeyOnSettings(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, settings: Settings) {
         const title = this.instanceTitle(settings)
         if (title) {
-            instance.setTitel(title)
+            instance.setTitle(title)
         }
         const image = this.instanceImage(settings)
         if (image) {

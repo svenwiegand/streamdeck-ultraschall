@@ -9,6 +9,7 @@ interface State {
     state: "playing" | "paused" | "stopped" | "done"
     secondaryState?: "fadingIn" | "fadingOut"
     progress: number
+    remainingTime?: string
 }
 
 type Instance = ActionInstance<Settings, State>
@@ -39,7 +40,7 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
     }
 
     protected instanceTitle(settings: Settings): string | undefined {
-        return settings.player.toString()
+        return settings.title ?? settings.player.toString()
     }
 
     protected instanceImage(settings: Settings): string | undefined {
@@ -71,6 +72,7 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
             `/ultraschall/soundboard/player/${settings.player}/stop`,
             `/ultraschall/soundboard/player/${settings.player}/done`,
             `/ultraschall/soundboard/player/${settings.player}/progress`,
+            `/ultraschall/soundboard/player/${settings.player}/remaining`,
         ]
     }
 
@@ -111,12 +113,20 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
                 return onSecondaryStateMsg("fadingOut")
             case `/ultraschall/soundboard/player/${instance.settings.player}/progress`:
                 return this.onProgress(instance, msg.args?.[0] as number)
+            case `/ultraschall/soundboard/player/${instance.settings.player}/remaining`:
+                return this.updateTitle(instance, msg.args?.[0] as string)
         }
+    }
+
+    private onProgress(instance: Instance, progress: number) {
+        instance.state.progress = progress
+        this.updateImage(instance)
     }
 
     private updateState(instance: Instance, state: State["state"]) {
         instance.state.state = state
         this.updateImage(instance)
+        this.updateTitle(instance)
     }
 
     private updateSecondaryState(instance: Instance, secondaryState: State["secondaryState"]) {
@@ -124,9 +134,15 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
         this.updateImage(instance)
     }
 
-    private onProgress(instance: Instance, progress: number) {
-        instance.state.progress = progress
-        this.updateImage(instance)
+    private updateTitle(instance: Instance, updatedRemainingTime?: string) {
+        if (updatedRemainingTime) {
+            instance.state.remainingTime = updatedRemainingTime
+        }
+        switch (instance.state.state) {
+            case "playing": break
+            default: instance.state.remainingTime = undefined
+        }
+        instance.setTitle(instance.state.remainingTime ?? instance.settings.title)
     }
 
     private updateImage(instance: Instance) {
