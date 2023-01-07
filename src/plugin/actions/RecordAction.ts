@@ -7,18 +7,27 @@ import {KeyEvent} from "streamdeck/plugin/events"
 import iconRecord from "assets/images/key-record.svg"
 import iconRecording from "assets/images/key-recording.svg"
 
-type Instance = ActionInstance<Settings>
+interface State {
+    recording: boolean
+    time?: string
+}
 
-export class RecordAction extends OscAction<Settings> {
+type Instance = ActionInstance<Settings, State>
+
+export class RecordAction extends OscAction<Settings, State> {
     constructor(osc: Osc) {
         super(actionId, osc)
     }
 
+    protected deriveState(settings: Settings, instance?: Instance): State {
+        return {
+            recording: false,
+        }
+    }
+
     protected onDidReceiveSettings(instance: Instance, settings: Settings, prevSettings: Settings) {
         super.onDidReceiveSettings(instance, settings, prevSettings)
-        if (!settings.showTime) {
-            instance.setTitle("")
-        }
+        this.updateTitle(instance)
     }
 
     protected onKeyDown(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
@@ -42,14 +51,19 @@ export class RecordAction extends OscAction<Settings> {
         })
     }
 
-    private onRecordState(instance: Instance, record: boolean) {
-        instance.setImage(record ? iconRecording : iconRecord)
+    private onRecordState(instance: Instance, recording: boolean) {
+        instance.state.recording = recording
+        instance.setImage(recording ? iconRecording : iconRecord)
+        this.updateTitle(instance)
     }
 
     private onTimeChange(instance: Instance, time: string) {
-        if (instance.settings.showTime) {
-            const timeWithoutMillis = time.split(".")[0]
-            instance.setTitle(timeWithoutMillis)
-        }
+        const timeWithoutMillis = time.split(".")[0]
+        instance.state.time = timeWithoutMillis
+        this.updateTitle(instance)
+    }
+
+    private updateTitle(instance: Instance) {
+        instance.setTitle(instance.state.recording && instance.settings.showTime ? instance.state.time : "")
     }
 }

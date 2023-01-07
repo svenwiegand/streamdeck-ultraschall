@@ -19,6 +19,12 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
                 <input id="showTitle" className="sdpi-item-value" type="checkbox" checked={settings.showTime} onChange={onShowTimeChange}/>
                 <label {...{for:"showTitle"}}><span/>Show recording time</label>
             </div>
+            <div className="sdpi-item">
+                <div className="sdpi-item-label empty"/>
+                <details className="sdpi-item-value">
+                    <summary>You need to leave the title empty to make this work.</summary>
+                </details>
+            </div>
         </InspectorWithGlobalSettings>
     )
 }
