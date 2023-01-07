@@ -1,6 +1,7 @@
 import * as path from "path"
 import * as webpack from "webpack"
 import CopyPlugin from "copy-webpack-plugin"
+import nodeExternals from "webpack-node-externals"
 
 const isProduction = process.env.NODE_ENV == "production"
 const outputPath = "dist/de.sven-wiegand.ultraschall.sdPlugin"
@@ -19,6 +20,7 @@ const pluginConfig: webpack.Configuration = {
             ]
         })
     ],
+    externals: isProduction ? [] : [nodeExternals()],
     module: {
         rules: [
             {
