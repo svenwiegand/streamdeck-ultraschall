@@ -3,7 +3,7 @@ A plugin for [Elgato's Stream Deck](https://www.elgato.com/de/stream-deck-mk2), 
 # Features
 In contrast to [Ultraschall's official stream deck plugin](https://github.com/Ultraschall/ultraschall-stream-deck-plugin), this one fully focuses on podcast recording and provides enhanced feedback on the stream deck like recording time and remaining time for soundboard clips.
 
-![Screenshot](assets/previews/1-preview.png)
+![Screenshot](media/streamdeck.gif)
 
 Here is the list of actions supported, including the configuration options:
 
