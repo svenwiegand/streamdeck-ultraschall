@@ -33,7 +33,7 @@ export const InspectorWithGlobalSettings: React.FC<Props> = ({inspector, childre
     }
     const inputs = hostIp && sendPort && receivePort ? (<>
         <div className="sdpi-item">
-            <div className="sdpi-item-label">Host IP</div>
+            <div className="sdpi-item-label">Send IP</div>
             <input
                 type="text"
                 value={hostIp}
@@ -72,6 +72,7 @@ export const InspectorWithGlobalSettings: React.FC<Props> = ({inspector, childre
             </a>
         </div>
         <div className="sdpi-item">
+            <div className="sdpi-item-label empty"></div>
             <button className="sdpi-item-value" onClick={applySettings}>Save</button>
         </div>
     </>) : <></>
