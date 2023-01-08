@@ -1,3 +1,4 @@
+# Setup OSC Connection
 This Stream Deck plugin talks to Reaper using OSC based on UDP. Thus, we need to configure the network connection. Each action provides a **Global Settings** section. Expand it to configure the network settings for all actions.
 
 - **Send IP:** The IP address of the host running Reaper/Ultraschall. If this is the same host as the Stream Deck is connected to, use the local host address `127.0.0.1` (default).
