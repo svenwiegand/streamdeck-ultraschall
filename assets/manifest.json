@@ -69,13 +69,13 @@
       ]
     }
   ],
-  "Category": "Ultraschall (OSC)",
+  "Category": "Ultraschall (Alternative)",
   "CategoryIcon": "images/category",
-  "Name": "Ultraschall (OSC)",
-  "Icon": "images/pluginIcon",
-  "Version": "0.0.0-development",
+  "Name": "Ultraschall (Alternative)",
+  "Icon": "images/plugin",
+  "Version": "1.0.0",
   "Author": "Sven Wiegand",
-  "Description": "Make recording podcasts with Ultraschall even more fun. In contrast to the official Ultraschall plugin this one works with Streamdeck version 6 and provides extended soundboard features.",
+  "Description": "Make recording podcasts with Ultraschall even more fun. In contrast to the official Ultraschall plugin this one focuses on recording and soundboard features.",
   "URL": "https://github.com/svenwiegand/streamdeck-ultraschall",
   "CodePathMac": "mac/streamdeck-ultraschall.sh",
   "CodePathWin": "win/streamdeck-ultraschall.cmd",

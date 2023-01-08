@@ -67,7 +67,7 @@ export const InspectorWithGlobalSettings: React.FC<Props> = ({inspector, childre
         </div>
         <div className="sdpi-item">
             <div className="sdpi-item-label empty"></div>
-            <a className="sdpi-item-value" href="https://github.com/svenwiegand/streamdeck-ultraschall" target="_blank">
+            <a className="sdpi-item-value" href="https://github.com/svenwiegand/streamdeck-ultraschall/blob/main/SETUP.md" target="_blank">
                 See documentation for details
             </a>
         </div>
