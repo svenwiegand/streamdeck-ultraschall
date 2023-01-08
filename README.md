@@ -14,7 +14,7 @@ Here is the full list of actions supported:
   - [x] Push to talk
 - [x] Set marker (chapter mark or edit mark)
 - [x] Trigger soundboard clip including visual feedback of the remaining time and option for fade-in, fade-out
-- [ ] Duck soundboard (decrease soundboard volume to talk over background music)
+- [x] Duck soundboard (decrease soundboard volume to talk over background music)
 
 ## Technical Stuff
 To make the feedback stuff possible, this plugin uses OSC for communication with Reaper and Ultraschall. To make OSC communication work, we cannot use the standard stream deck JavaScript API, because the plugin would run in a browser environment which would not allow us to establish UDP connections. 

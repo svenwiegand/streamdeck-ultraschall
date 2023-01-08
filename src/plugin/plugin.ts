@@ -8,6 +8,7 @@ import {MuteAction} from "./actions/MuteAction"
 import {RecordAction} from "./actions/RecordAction"
 import {MarkerAction} from "./actions/MarkerAction"
 import {SoundboardPlayAction} from "./actions/SoundboardPlayAction"
+import {SoundboardDuckAction} from "./actions/SoundboardDuckAction"
 
 initLogging()
 console.log(new Date())
@@ -39,5 +40,6 @@ plugin.registerAction(
     new MarkerAction(osc),
     new MuteAction(osc),
     new RecordAction(osc),
+    new SoundboardDuckAction(osc),
     new SoundboardPlayAction(osc),
 )

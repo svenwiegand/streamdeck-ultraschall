@@ -39,3 +39,31 @@ export abstract class ReactActionInspector<
         ReactDOM.render(element, document.getElementById("root"))
     }
 }
+
+export class SettingsHandler<Settings extends object> {
+    readonly props: InspectorProps<Settings>
+    readonly settings: Settings
+    readonly setSettings: React.Dispatch<React.SetStateAction<Settings>>
+
+    constructor(props: InspectorProps<Settings>) {
+        this.props = props
+        const [settings, setSettings] = React.useState(props.settings)
+        this.settings = settings
+        this.setSettings = setSettings
+    }
+
+    updateSettings(changedSettings: Partial<Settings>) {
+        const newSettings = {...this.settings, ...changedSettings}
+        this.setSettings(newSettings)
+        this.props.onSettingsChange(newSettings)
+    }
+
+    onInputChange<Value extends string>(onChange: (value: Value) => Partial<Settings> | undefined) {
+        return (e: React.FormEvent<{ value: string }>) => {
+            const settings = onChange(e.currentTarget.value as Value)
+            if (settings) {
+                this.updateSettings(settings)
+            }
+        }
+    }
+}

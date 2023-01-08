@@ -54,6 +54,19 @@
           "FontSize": 12
         }
       ]
+    },
+    {
+      "Icon": "images/action-soundboard-duck",
+      "Name": "Duck Soundboard",
+      "SupportedInMultiActions": false,
+      "Tooltip": "Reduce the volumen of the soundboard to talk over it.",
+      "UUID": "de.sven-wiegand.ultraschall.soundboard.duck",
+      "States": [
+        {
+          "TitleAlignment": "bottom",
+          "FontSize": 12
+        }
+      ]
     }
   ],
   "Category": "Ultraschall (OSC)",
