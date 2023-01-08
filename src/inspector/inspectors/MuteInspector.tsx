@@ -1,28 +1,19 @@
 import * as React from "react"
 import {actionId, Settings} from "common/actions/mute"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
-import {InspectorProps, ReactActionInspector} from "./ReactActionInspector"
+import {InspectorProps, ReactActionInspector, SettingsHandler} from "./ReactActionInspector"
 
 type Props = InspectorProps<Settings>
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
-    const [settings, setSettings] = React.useState(props.settings)
-    const updateSettings = (s: Settings) => {
-        setSettings(s)
-        props.onSettingsChange(s)
-    }
-    const onTrackChange = (e: React.FormEvent<HTMLSelectElement>) => {
-        const track = Number(e.currentTarget.value)
-        updateSettings({...settings, track})
-    }
-    const onModeChange = (e: React.FormEvent<HTMLSelectElement>) => {
-        updateSettings({...settings, mode: e.currentTarget.value as Settings["mode"]})
-    }
+    const handler = new SettingsHandler(props)
+    const onTrackChange = handler.onInputChange(trackValue => ({track: Number(trackValue)}))
+    const onModeChange = handler.onInputChange((mode: Settings["mode"]) => ({mode}))
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">Track</div>
-                <select className="sdpi-item-value" value={settings.track} onChange={onTrackChange}>
+                <select className="sdpi-item-value" value={handler.settings.track} onChange={onTrackChange}>
                     <option value="1">Track 1</option>
                     <option value="2">Track 2</option>
                     <option value="3">Track 3</option>
@@ -37,7 +28,7 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
             </div>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">Mode</div>
-                <select className="sdpi-item-value" value={settings.mode} onChange={onModeChange}>
+                <select className="sdpi-item-value" value={handler.settings.mode} onChange={onModeChange}>
                     <option value="toggle">Toggle</option>
                     <option value="pushToMute">Push to mute</option>
                     <option value="pushToTalk">Push to talk</option>

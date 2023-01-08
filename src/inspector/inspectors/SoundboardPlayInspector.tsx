@@ -1,37 +1,19 @@
 import {actionId, Settings} from "common/actions/soundboard-play"
-import {InspectorProps, ReactActionInspector} from "./ReactActionInspector"
+import {InspectorProps, ReactActionInspector, SettingsHandler} from "./ReactActionInspector"
 import * as React from "react"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
 
 type Props = InspectorProps<Settings>
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
-    const [settings, setSettings] = React.useState(props.settings)
-    const updateSettings = (s: Partial<Settings>) => {
-        const newSettings = {...settings, ...s}
-        setSettings(newSettings)
-        props.onSettingsChange(newSettings)
-    }
-    const onInputChange = (onChange: (value: string) => Partial<Settings> | undefined) => {
-        return (e: React.FormEvent<HTMLInputElement>) => {
-            const settings = onChange(e.currentTarget.value)
-            if (settings) {
-                updateSettings(settings)
-            }
-        }
-    }
-    const onTitleChange = onInputChange(title => ({title: title.trim() === "" ? undefined : title}))
-    const onPlayerChange = onInputChange(input => {
+    const handler = new SettingsHandler(props)
+    const onTitleChange = handler.onInputChange(title => ({title: title.trim() === "" ? undefined : title}))
+    const onPlayerChange = handler.onInputChange(input => {
         const player = Number(input)
         return isNaN(player) ? undefined : {player}
     })
-    const onSelectChange = (onChange: (value: string) => Partial<Settings>) => {
-        return (e: React.FormEvent<HTMLSelectElement>) => {
-            updateSettings(onChange(e.currentTarget.value))
-        }
-    }
-    const onStartTypeChange = onSelectChange(st => ({startType: st as Settings["startType"]}))
-    const onStopTypeChange = onSelectChange(st => ({stopType: st as Settings["stopType"]}))
+    const onStartTypeChange = handler.onInputChange(st => ({startType: st as Settings["startType"]}))
+    const onStopTypeChange = handler.onInputChange(st => ({stopType: st as Settings["stopType"]}))
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
             <div className="sdpi-item">
@@ -45,7 +27,7 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
                 <input
                     className="sdpi-item-value"
                     type="text"
-                    value={settings.title ?? ""}
+                    value={handler.settings.title ?? ""}
                     onChange={onTitleChange}
                 />
             </div>
@@ -54,7 +36,7 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
                 <input
                     className="sdpi-item-value"
                     type="text"
-                    value={settings.player}
+                    value={handler.settings.player}
                     onChange={onPlayerChange}
                     required
                     pattern="[1-9][0-9]?"
@@ -63,14 +45,14 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
             <div className="sdpi-heading"><strong>Button Action</strong></div>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">When stopped</div>
-                <select className="sdpi-item-value select" value={settings.startType} onChange={onStartTypeChange}>
+                <select className="sdpi-item-value select" value={handler.settings.startType} onChange={onStartTypeChange}>
                     <option value="play">Play</option>
                     <option value="fadeIn">Fade in</option>
                 </select>
             </div>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">While playing</div>
-                <select className="sdpi-item-value select" value={settings.stopType} onChange={onStopTypeChange}>
+                <select className="sdpi-item-value select" value={handler.settings.stopType} onChange={onStopTypeChange}>
                     <option value="stop">Stop</option>
                     <option value="fadeOut">Fade out</option>
                 </select>

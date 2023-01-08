@@ -1,22 +1,18 @@
 import * as React from "react"
 import {actionId, Settings} from "common/actions/marker"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
-import {InspectorProps, ReactActionInspector} from "./ReactActionInspector"
+import {InspectorProps, ReactActionInspector, SettingsHandler} from "./ReactActionInspector"
 
 type Props = InspectorProps<Settings>
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
-    const [settings, setSettings] = React.useState(props.settings)
-    const onMarkerTypeChange = (e: React.FormEvent<HTMLSelectElement>) => {
-        const s = {markerType: e.currentTarget.value as Settings["markerType"]}
-        setSettings(s)
-        props.onSettingsChange(s)
-    }
+    const handler = new SettingsHandler(props)
+    const onMarkerTypeChange = handler.onInputChange((markerType: Settings["markerType"]) => ({markerType}))
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
             <div className="sdpi-item">
                 <div className="sdpi-item-label">Marker Type</div>
-                <select className="sdpi-item-value" value={settings.markerType} onChange={onMarkerTypeChange}>
+                <select className="sdpi-item-value" value={handler.settings.markerType} onChange={onMarkerTypeChange}>
                     <option value="chapter">Chapter Mark</option>
                     <option value="edit">Edit Mark</option>
                 </select>

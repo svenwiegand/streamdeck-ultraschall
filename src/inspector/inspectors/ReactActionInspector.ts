@@ -58,12 +58,23 @@ export class SettingsHandler<Settings extends object> {
         this.props.onSettingsChange(newSettings)
     }
 
-    onInputChange<Value extends string>(onChange: (value: Value) => Partial<Settings> | undefined) {
-        return (e: React.FormEvent<{ value: string }>) => {
-            const settings = onChange(e.currentTarget.value as Value)
+    private onChange<ElementType, EventValue, Value extends EventValue>(
+        valueOf: (e: ElementType) => EventValue,
+        onChange: (value: Value) => Partial<Settings> | undefined
+    ) {
+        return (e: React.FormEvent<ElementType>) => {
+            const settings = onChange(valueOf(e.currentTarget) as Value)
             if (settings) {
                 this.updateSettings(settings)
             }
         }
+    }
+
+    onInputChange<Value extends string>(onChange: (value: Value) => Partial<Settings> | undefined) {
+        return this.onChange<{value: string}, string, Value>(e => e.value, onChange)
+    }
+
+    onCheckboxChange<Value extends boolean>(onChange: (value: Value) => Partial<Settings | undefined>) {
+        return this.onChange<{checked: boolean}, boolean, Value>(e => e.checked, onChange)
     }
 }
