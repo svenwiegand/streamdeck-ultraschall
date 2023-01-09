@@ -1,6 +1,7 @@
 import * as path from "path"
 import * as webpack from "webpack"
 import CopyPlugin from "copy-webpack-plugin"
+import MakeExecutablePlugin from "./src/build/webpack-make-executable"
 import nodeExternals from "webpack-node-externals"
 
 const isProduction = process.env.NODE_ENV == "production"
@@ -18,7 +19,10 @@ const pluginConfig: webpack.Configuration = {
             patterns: [
                 { from: "assets", to: "[path][name][ext]" }
             ]
-        })
+        }),
+        new MakeExecutablePlugin({
+            files: [path.resolve(__dirname, outputPath, "mac", "streamdeck-ultraschall.sh")],
+        }),
     ],
     externals: isProduction ? [] : [nodeExternals()],
     module: {
