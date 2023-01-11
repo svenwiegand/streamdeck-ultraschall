@@ -7,7 +7,7 @@
         {
           "Image": "images/key-record",
           "TitleAlignment": "bottom",
-          "FontSize": 12
+          "FontSize": "12"
         }
       ],
       "SupportedInMultiActions": false,
@@ -24,7 +24,7 @@
         {
           "Image": "images/key-mute",
           "TitleAlignment": "bottom",
-          "FontSize": 12
+          "FontSize": "12"
         }
       ]
     },
@@ -38,7 +38,7 @@
         {
           "Image": "images/key-marker-chapter",
           "TitleAlignment": "bottom",
-          "FontSize": 12
+          "FontSize": "12"
         }
       ]
     },
@@ -50,8 +50,9 @@
       "UUID": "de.sven-wiegand.ultraschall.soundboard.play",
       "States": [
         {
+          "Image": "images/key-soundboard-play",
           "TitleAlignment": "bottom",
-          "FontSize": 12
+          "FontSize": "12"
         }
       ]
     },
@@ -63,8 +64,9 @@
       "UUID": "de.sven-wiegand.ultraschall.soundboard.duck",
       "States": [
         {
+          "Image": "images/key-soundboard-duck",
           "TitleAlignment": "bottom",
-          "FontSize": 12
+          "FontSize": "12"
         }
       ]
     }
