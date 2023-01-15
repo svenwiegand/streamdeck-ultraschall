@@ -1,17 +1,20 @@
 import * as path from "path"
 import * as webpack from "webpack"
 import CopyPlugin from "copy-webpack-plugin"
-import MakeExecutablePlugin from "./src/build/webpack-make-executable"
+import MakeExecutablePlugin from "./webpack/make-executable-webpack-plugin"
+import StreamdeckDistributionToolPlugin from "./webpack/streamdeck-distribution-tool-webpack-plugin"
 import nodeExternals from "webpack-node-externals"
 
 const isProduction = process.env.NODE_ENV == "production"
-const outputPath = "dist/de.sven-wiegand.ultraschall.sdPlugin"
+const distDir = path.resolve(__dirname, "dist")
+const pluginId = "de.sven-wiegand.ultraschall"
+const outputDir = path.resolve(distDir, `${pluginId}.sdPlugin`)
 
 const pluginConfig: webpack.Configuration = {
     entry: "./src/plugin/plugin.ts",
     target: "node",
     output: {
-        path: path.resolve(__dirname, outputPath),
+        path: outputDir,
         filename: "plugin.js",
     },
     plugins: [
@@ -21,8 +24,13 @@ const pluginConfig: webpack.Configuration = {
             ]
         }),
         new MakeExecutablePlugin({
-            files: [path.resolve(__dirname, outputPath, "mac", "streamdeck-ultraschall.sh")],
+            files: [path.resolve(outputDir, "mac", "streamdeck-ultraschall.sh")],
         }),
+        new StreamdeckDistributionToolPlugin({
+            pluginId,
+            distDir,
+            enable: isProduction
+        })
     ],
     externals: isProduction ? [] : [nodeExternals()],
     module: {
@@ -57,7 +65,7 @@ const inspectorConfig: webpack.Configuration = {
     output: {
         library: "connectElgatoStreamDeckSocket",
         libraryExport: "default",
-        path: path.resolve(__dirname, outputPath),
+        path: outputDir,
         filename: "inspector.js",
     },
     plugins: [],

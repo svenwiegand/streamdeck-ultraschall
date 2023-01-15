@@ -5,7 +5,7 @@ interface Options {
     files: string[]
 }
 
-class WebpackMakeExecutable {
+class MakeExecutablePlugin {
     private readonly options
 
     constructor(options: Options) {
@@ -19,4 +19,4 @@ class WebpackMakeExecutable {
     }
 }
 
-export default WebpackMakeExecutable
+export default MakeExecutablePlugin
