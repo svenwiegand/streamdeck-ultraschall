@@ -1,12 +1,11 @@
 import {ActionInstance, PluginAction} from "streamdeck/plugin/PluginAction"
-import {Osc} from "../osc/Osc"
-import {Message} from "../osc/typedOsc"
+import {Osc, OscMessage} from "../osc/Osc"
 import {AppearanceEvent} from "streamdeck/plugin/events"
 
 class SubscribeContext<Settings extends object> {
     readonly action: OscAction<Settings>
     readonly instance: ActionInstance<Settings>
-    readonly listener = (msg: Message) => this.action.onOscMessage(this.instance, msg)
+    readonly listener = (msg: OscMessage) => this.action.onOscMessage(this.instance, msg)
 
     constructor(action: OscAction<Settings>, instance: ActionInstance<Settings>) {
         this.action = action
@@ -43,7 +42,7 @@ export abstract class OscAction<
         }
     }
 
-    public onOscMessage(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, msg: Message) {
+    public onOscMessage(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, msg: OscMessage) {
         // no default implementation
     }
 

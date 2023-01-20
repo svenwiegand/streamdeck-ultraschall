@@ -154,9 +154,7 @@ export abstract class PluginAction<
         }
         switch (event.event) {
             case "didReceiveSettings": return withInstance(event.context, event.payload.settings, instance => {
-                const prevSettings = instance.settings
-                instance.didReceiveSettings(event.payload.settings)
-                this.onDidReceiveSettings(instance, event.payload.settings, prevSettings)
+                this.onDidReceiveSettings(instance, event.payload.settings, instance.settings)
             })
             case "didReceiveGlobalSettings":
                 return this.onDidReceiveGlobalSettings(event.payload.settings)
@@ -216,7 +214,8 @@ export abstract class PluginAction<
     }
 
     protected onDidReceiveSettings(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, settings: Settings, prevSettings: Settings) {
-        const state = this.deriveState(settings, instance)
+        instance.didReceiveSettings(settings)
+        instance.state = this.deriveState(settings, instance)
     }
 
     protected onKeyDown(instance: ActionInstance<Settings, State, GlobalSettings, Payload>, payload: KeyEvent<Settings>["payload"]) {

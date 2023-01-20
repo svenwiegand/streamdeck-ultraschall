@@ -1,9 +1,8 @@
 import {actionId, Settings} from "common/actions/soundboard-play"
 import {OscAction} from "./OscAction"
-import {Osc} from "../osc/Osc"
+import {Osc, OscMessage} from "../osc/Osc"
 import {ActionInstance} from "streamdeck/plugin/PluginAction"
 import {KeyEvent} from "streamdeck/plugin/events"
-import {Message} from "../osc/typedOsc"
 
 interface State {
     state: "playing" | "paused" | "stopped" | "done"
@@ -19,14 +18,19 @@ type Action = "play" | "pause" | "stop" | "fadeIn" | "fadeOut"
 export class SoundboardPlayAction extends OscAction<Settings, State> {
     constructor(osc: Osc) {
         super(actionId, osc)
+        osc.addPatternListener("/ultraschall/soundboard/player/*/title", (msg: OscMessage) => {
+            const player = Number(msg.pathMatch)
+            const title = (msg.args?.[0] as string).toLowerCase()
+            this.forEachInstance(instance => this.onOscPlayerTitle(instance, player, title))
+        })
     }
 
     protected defaultSettings(): Settings | undefined {
-        const usedPlayers = this.mapInstances(i => i.settings.player).filter(player => !!player)
+        const usedPlayers = this.mapInstances(i => i.settings.playerPos).filter(player => !!player)
         const maxPlayer = usedPlayers.length > 0 ? Math.max(...usedPlayers) : 0
         const nextPlayer = maxPlayer + 1
         return {
-            player: nextPlayer,
+            playerPos: nextPlayer,
             startType: "play",
             stopType: "stop",
         }
@@ -40,18 +44,25 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
     }
 
     protected instanceTitle(settings: Settings): string | undefined {
-        return settings.title ?? settings.player.toString()
+        return settings.title ?? settings.playerPos.toString()
     }
 
     protected instanceImage(settings: Settings): string | undefined {
         return this.image({state: "stopped", progress: 0}, settings)
     }
 
+    private onOscPlayerTitle(instance: Instance, playerPos: number, lowerCaseTitle: string) {
+        if (instance.settings.playerTitle?.toLowerCase() === lowerCaseTitle) {
+            console.log(`Changed position for player with title '${lowerCaseTitle}' from ${instance.settings.playerPos} to ${playerPos}`)
+            this.onDidReceiveSettings(instance, {...instance.settings, playerPos}, instance.settings)
+        }
+    }
+
     protected onKeyDown(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
         super.onKeyDown(instance, payload)
 
         const sendCommand = (command: "play" | "pause" | "stop" | "fadein" | "fadeout", arg = 1) => {
-            this.osc.send(`/ultraschall/soundboard/player/${instance.settings.player}/${command}`, arg)
+            this.osc.send(`/ultraschall/soundboard/player/${instance.settings.playerPos}/${command}`, arg)
         }
 
         switch (this.action(instance.state, instance.settings)) {
@@ -65,14 +76,14 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
 
     protected instanceOscSubscribeAddresses(settings: Settings): string[] {
         return [
-            `/ultraschall/soundboard/player/${settings.player}/play`,
-            `/ultraschall/soundboard/player/${settings.player}/fadein`,
-            `/ultraschall/soundboard/player/${settings.player}/fadeout`,
-            `/ultraschall/soundboard/player/${settings.player}/pause`,
-            `/ultraschall/soundboard/player/${settings.player}/stop`,
-            `/ultraschall/soundboard/player/${settings.player}/done`,
-            `/ultraschall/soundboard/player/${settings.player}/progress`,
-            `/ultraschall/soundboard/player/${settings.player}/remaining`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/play`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/fadein`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/fadeout`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/pause`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/stop`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/done`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/progress`,
+            `/ultraschall/soundboard/player/${settings.playerPos}/remaining`,
         ]
     }
 
@@ -85,7 +96,7 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
         }
     }
 
-    onOscMessage(instance: Instance, msg: Message) {
+    onOscMessage(instance: Instance, msg: OscMessage) {
         super.onOscMessage(instance, msg)
 
         const onStateMsg = (state: State["state"]) => {
@@ -99,21 +110,21 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
         }
 
         switch (msg.address) {
-            case `/ultraschall/soundboard/player/${instance.settings.player}/play`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/play`:
                 return onStateMsg("playing")
-            case `/ultraschall/soundboard/player/${instance.settings.player}/pause`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/pause`:
                 return onStateMsg("paused")
-            case `/ultraschall/soundboard/player/${instance.settings.player}/stop`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/stop`:
                 return onStateMsg("stopped")
-            case `/ultraschall/soundboard/player/${instance.settings.player}/done`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/done`:
                 return onStateMsg("done")
-            case `/ultraschall/soundboard/player/${instance.settings.player}/fadein`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/fadein`:
                 return onSecondaryStateMsg("fadingIn")
-            case `/ultraschall/soundboard/player/${instance.settings.player}/fadeout`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/fadeout`:
                 return onSecondaryStateMsg("fadingOut")
-            case `/ultraschall/soundboard/player/${instance.settings.player}/progress`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/progress`:
                 return this.onProgress(instance, msg.args?.[0] as number)
-            case `/ultraschall/soundboard/player/${instance.settings.player}/remaining`:
+            case `/ultraschall/soundboard/player/${instance.settings.playerPos}/remaining`:
                 return this.updateTitle(instance, msg.args?.[0] as string)
         }
     }
