@@ -16,7 +16,7 @@ export abstract class ReactActionInspector<
 > extends ActionInspector<Settings, GlobalSettings, Payload> {
     protected readonly component: FunctionComponent<InspectorProps<Settings>>
 
-    constructor(
+    protected constructor(
         uuid: string,
         component: FunctionComponent<InspectorProps<Settings>>
     ) {
@@ -58,23 +58,15 @@ export class SettingsHandler<Settings extends object> {
         this.props.onSettingsChange(newSettings)
     }
 
-    private onChange<ElementType, EventValue, Value extends EventValue>(
-        valueOf: (e: ElementType) => EventValue,
-        onChange: (value: Value) => Partial<Settings> | undefined
-    ) {
-        return (e: React.FormEvent<ElementType>) => {
-            const settings = onChange(valueOf(e.currentTarget) as Value)
-            if (settings) {
-                this.updateSettings(settings)
-            }
-        }
-    }
-
-    onInputChange<Value extends string>(onChange: (value: Value) => Partial<Settings> | undefined) {
-        return this.onChange<{value: string}, string, Value>(e => e.value, onChange)
-    }
-
-    onCheckboxChange<Value extends boolean>(onChange: (value: Value) => Partial<Settings | undefined>) {
-        return this.onChange<{checked: boolean}, boolean, Value>(e => e.checked, onChange)
+    onInputChange<Value>(onChange: (value: Value) => Partial<Settings> | undefined) {
+        return React.useCallback(
+            (value: Value) => {
+                const settings = onChange(value)
+                if (settings) {
+                    this.updateSettings(settings)
+                }
+            },
+            [onChange]
+        )
     }
 }

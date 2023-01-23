@@ -2,38 +2,32 @@ import * as React from "react"
 import {actionId, Settings} from "common/actions/mute"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
 import {InspectorProps, ReactActionInspector, SettingsHandler} from "./ReactActionInspector"
+import {Select} from "./components/Select"
 
 type Props = InspectorProps<Settings>
 
 const PropertyInspector: React.FC<Props> = (props: Props) => {
     const handler = new SettingsHandler(props)
-    const onTrackChange = handler.onInputChange(trackValue => ({track: Number(trackValue)}))
-    const onModeChange = handler.onInputChange((mode: Settings["mode"]) => ({mode}))
+    const onTrackChange = handler.onInputChange<number>(track => ({track}))
+    const onModeChange = handler.onInputChange<Settings["mode"]>(mode => ({mode}))
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
-            <div className="sdpi-item">
-                <div className="sdpi-item-label">Track</div>
-                <select className="sdpi-item-value" value={handler.settings.track} onChange={onTrackChange}>
-                    <option value="1">Track 1</option>
-                    <option value="2">Track 2</option>
-                    <option value="3">Track 3</option>
-                    <option value="4">Track 4</option>
-                    <option value="5">Track 5</option>
-                    <option value="6">Track 6</option>
-                    <option value="7">Track 7</option>
-                    <option value="8">Track 8</option>
-                    <option value="9">Track 9</option>
-                    <option value="10">Track 10</option>
-                </select>
-            </div>
-            <div className="sdpi-item">
-                <div className="sdpi-item-label">Mode</div>
-                <select className="sdpi-item-value" value={handler.settings.mode} onChange={onModeChange}>
-                    <option value="toggle">Toggle</option>
-                    <option value="pushToMute">Push to mute</option>
-                    <option value="pushToTalk">Push to talk</option>
-                </select>
-            </div>
+            <Select
+                label="Track"
+                value={handler.settings.track}
+                onChange={onTrackChange}
+                options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(track => [track, `Track ${track}`])}
+            />
+            <Select
+                label="Mode"
+                value={handler.settings.mode}
+                onChange={onModeChange}
+                options={[
+                    ["toggle", "Toggle"],
+                    ["pushToMute", "Push to mute"],
+                    ["pushToTalk", "Push to talk"],
+                ]}
+            />
         </InspectorWithGlobalSettings>
     )
 }

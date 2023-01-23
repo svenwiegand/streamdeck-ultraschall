@@ -2,6 +2,11 @@ import {actionId, Settings} from "common/actions/soundboard-play"
 import {InspectorProps, ReactActionInspector, SettingsHandler} from "./ReactActionInspector"
 import * as React from "react"
 import {InspectorWithGlobalSettings} from "./InspectorWithGlobalSettings"
+import {HelperText} from "./components/HelperText"
+import {TextField} from "./components/TextField"
+import {Heading} from "./components/Heading"
+import {Select} from "./components/Select"
+import {Checkbox} from "./components/Checkbox"
 
 type Props = InspectorProps<Settings>
 
@@ -10,114 +15,96 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
     const [playerIdentification, setPlayerIdentification] =
         React.useState<"title" | "position">(props.settings.playerTitle ? "title" : "position")
     const [playerTitle, setPlayerTitle] = React.useState(props.settings.playerTitle)
-    const onTitleChange = handler.onInputChange(title => ({title: title.trim() === "" ? undefined : title}))
+    const onTitleChange = handler.onInputChange<string>(title => ({title: title.trim() === "" ? undefined : title}))
 
     const onPlayerIdentificationChange = handler.onInputChange<"title" | "position">(identification => {
         setPlayerIdentification(identification)
         return {playerTitle: identification === "title" ? playerTitle : undefined}
     })
-    const onPlayerTitleChange = handler.onInputChange(title => {
+    const onPlayerTitleChange = handler.onInputChange<string>(title => {
         setPlayerTitle(title)
         return ({playerTitle: playerIdentification ? title : undefined})
     })
-    const onPlayerPosChange = handler.onInputChange(input => {
+    const onPlayerPosChange = handler.onInputChange<string>(input => {
         const player = Number(input)
         return isNaN(player) ? undefined : {playerPos: player}
     })
 
-    const onStartTypeChange = handler.onInputChange(st => ({startType: st as Settings["startType"]}))
-    const onStopTypeChange = handler.onInputChange(st => ({stopType: st as Settings["stopType"]}))
+    const onStartTypeChange = handler.onInputChange<Settings["startType"]>(startType => ({startType}))
+    const onStopTypeChange = handler.onInputChange<Settings["stopType"]>(stopType => ({stopType}))
 
-    const onSetChapterMarkChange = handler.onCheckboxChange(setChapterMark => ({setChapterMark}))
+    const onSetChapterMarkChange = handler.onInputChange<boolean>(setChapterMark => ({setChapterMark}))
 
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
-            <div className="sdpi-item">
-                <div className="sdpi-item-label empty"/>
-                <details className="sdpi-item-value">
-                    <summary>If you want to see remaining time when soundboard is playing, leave the title above empty and use the below one.</summary>
-                </details>
-            </div>
-            <div className="sdpi-item">
-                <div className="sdpi-item-label">Title</div>
-                <input
-                    className="sdpi-item-value"
-                    type="text"
-                    value={handler.settings.title ?? ""}
-                    onChange={onTitleChange}
-                />
-            </div>
+            <HelperText>
+                If you want to see remaining time when soundboard is playing, leave the title above empty and use the below one.
+            </HelperText>
+            <TextField
+                value={handler.settings.title ?? ""}
+                onChange={onTitleChange}
+            />
 
-            <div className="sdpi-heading"><strong>Soundboard Clip</strong></div>
-            <div className="sdpi-item">
-                <div className="sdpi-item-label">Clip ID</div>
-                <select className="sdpi-item-value select" value={playerIdentification} onChange={onPlayerIdentificationChange}>
-                    <option value="position">by position in soundboard</option>
-                    <option value="title">by title</option>
-                </select>
-            </div>
+            <Heading>Soundboard Clip</Heading>
+            <Select
+                value={playerIdentification}
+                onChange={onPlayerIdentificationChange}
+                options={[
+                    ["position", "by position in soundboard"],
+                    ["title", "by title"],
+                ]}
+            />
             {playerIdentification === "title" && (
                 <>
-                    <div className="sdpi-item">
-                        <div className="sdpi-item-label empty"/>
-                        <details className="sdpi-item-value">
-                            <summary>When a soundboard folder is loaded the plugin will determine the player position based on the exact title.</summary>
-                        </details>
-                    </div>
-                    <div className="sdpi-item">
-                        <div className="sdpi-item-label">Title</div>
-                        <input
-                            className="sdpi-item-value"
-                            type="text"
-                            value={handler.settings.playerTitle}
-                            onChange={onPlayerTitleChange}
-                            required={playerIdentification === "title"}
-                        />
-                    </div>
-                    <div className="sdpi-item">
-                        <div className="sdpi-item-label empty"/>
-                        <details className="sdpi-item-value">
-                            <summary>
-                                If you already have a soundboard loaded and want to use the key immediately, specify the player position manually here.
-                            </summary>
-                        </details>
-                    </div>
+                    <HelperText>
+                        When a soundboard folder is loaded the plugin will determine the player position based on the exact title.
+                    </HelperText>
+                    <TextField
+                        label="Title"
+                        value={handler.settings.playerTitle}
+                        onChange={onPlayerTitleChange}
+                        required={playerIdentification === "title"}
+                    />
+                    <HelperText>
+                        If you already have a soundboard loaded and want to use the key immediately, specify the player position manually here.
+                    </HelperText>
                 </>
             )}
-            <div className="sdpi-item">
-                <div className="sdpi-item-label">Position (1-99)</div>
-                <input
-                    className="sdpi-item-value"
-                    type="text"
-                    value={handler.settings.playerPos}
-                    onChange={onPlayerPosChange}
-                    required={playerIdentification === "position"}
-                    pattern="[1-9][0-9]?"
-                />
-            </div>
+            <TextField
+                label="Position (1-99)"
+                value={handler.settings.playerPos}
+                onChange={onPlayerPosChange}
+                required={playerIdentification === "position"}
+                pattern="[1-9][0-9]?"
+            />
 
-            <div className="sdpi-heading"><strong>Button Action</strong></div>
-            <div className="sdpi-item">
-                <div className="sdpi-item-label">When stopped</div>
-                <select className="sdpi-item-value select" value={handler.settings.startType} onChange={onStartTypeChange}>
-                    <option value="play">Play</option>
-                    <option value="fadeIn">Fade in</option>
-                </select>
-            </div>
-            <div className="sdpi-item">
-                <div className="sdpi-item-label">While playing</div>
-                <select className="sdpi-item-value select" value={handler.settings.stopType} onChange={onStopTypeChange}>
-                    <option value="stop">Stop</option>
-                    <option value="fadeOut">Fade out</option>
-                </select>
-            </div>
+            <Heading>Button Action</Heading>
+            <Select
+                label="When stopped"
+                value={handler.settings.startType}
+                onChange={onStartTypeChange}
+                options={[
+                    ["play", "Play"],
+                    ["fadeIn", "Fade in"],
+                ]}
+            />
+            <Select
+                label="While playing"
+                value={handler.settings.stopType}
+                onChange={onStopTypeChange}
+                options={[
+                    ["stop", "Stop"],
+                    ["fadeOut", "Fade out"],
+                ]}
+            />
 
-            <div className="sdpi-heading"><strong>Chapter Mark</strong></div>
-            <div className="sdpi-item" {...{type:"checkbox"}}>
-                <div className="sdpi-item-label">Chapter Mark</div>
-                <input id="showTitle" className="sdpi-item-value" type="checkbox" checked={handler.settings.setChapterMark} onChange={onSetChapterMarkChange}/>
-                <label {...{for:"showTitle"}}><span/>Set chapter mark on play</label>
-            </div>
+            <Heading>Chapter Mark</Heading>
+            <Checkbox
+                label="Chapter Mark"
+                checkboxLabel="Set chapter mark on play"
+                checked={handler.settings.setChapterMark}
+                onChange={onSetChapterMarkChange}
+            />
         </InspectorWithGlobalSettings>
     )
 }
