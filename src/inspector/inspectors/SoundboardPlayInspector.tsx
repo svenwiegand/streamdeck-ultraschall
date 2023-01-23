@@ -11,6 +11,7 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
         React.useState<"title" | "position">(props.settings.playerTitle ? "title" : "position")
     const [playerTitle, setPlayerTitle] = React.useState(props.settings.playerTitle)
     const onTitleChange = handler.onInputChange(title => ({title: title.trim() === "" ? undefined : title}))
+
     const onPlayerIdentificationChange = handler.onInputChange<"title" | "position">(identification => {
         setPlayerIdentification(identification)
         return {playerTitle: identification === "title" ? playerTitle : undefined}
@@ -23,8 +24,12 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
         const player = Number(input)
         return isNaN(player) ? undefined : {playerPos: player}
     })
+
     const onStartTypeChange = handler.onInputChange(st => ({startType: st as Settings["startType"]}))
     const onStopTypeChange = handler.onInputChange(st => ({stopType: st as Settings["stopType"]}))
+
+    const onSetChapterMarkChange = handler.onCheckboxChange(setChapterMark => ({setChapterMark}))
+
     return (
         <InspectorWithGlobalSettings inspector={props.inspector}>
             <div className="sdpi-item">
@@ -43,9 +48,9 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
                 />
             </div>
 
-            <div className="sdpi-heading"><strong>Player (aka Clip)</strong></div>
+            <div className="sdpi-heading"><strong>Soundboard Clip</strong></div>
             <div className="sdpi-item">
-                <div className="sdpi-item-label">Identification</div>
+                <div className="sdpi-item-label">Clip ID</div>
                 <select className="sdpi-item-value select" value={playerIdentification} onChange={onPlayerIdentificationChange}>
                     <option value="position">by position in soundboard</option>
                     <option value="title">by title</option>
@@ -105,6 +110,13 @@ const PropertyInspector: React.FC<Props> = (props: Props) => {
                     <option value="stop">Stop</option>
                     <option value="fadeOut">Fade out</option>
                 </select>
+            </div>
+
+            <div className="sdpi-heading"><strong>Chapter Mark</strong></div>
+            <div className="sdpi-item" {...{type:"checkbox"}}>
+                <div className="sdpi-item-label">Chapter Mark</div>
+                <input id="showTitle" className="sdpi-item-value" type="checkbox" checked={handler.settings.setChapterMark} onChange={onSetChapterMarkChange}/>
+                <label {...{for:"showTitle"}}><span/>Set chapter mark on play</label>
             </div>
         </InspectorWithGlobalSettings>
     )

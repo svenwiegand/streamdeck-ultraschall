@@ -5,4 +5,5 @@ export interface Settings {
     title?: string
     startType: "play" | "fadeIn"
     stopType: "stop" | "pause" | "fadeOut"
+    setChapterMark: boolean
 }

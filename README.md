@@ -15,9 +15,10 @@ Here is the list of actions supported, including the configuration options:
 - **Marker:** Set a marker while recording
   - Marker Type: Chapter Mark or Edit Mark
 - **Soundboard:** Play a soundboard clip and see remaining time
-  - Player: The player to trigger (1-99)
+  - Player: The player to trigger as soundboard position (1-99) or clip title
   - Button Action when stopped: Play or Fade in
   - Button Action while playing: Stop or Fade out
+  - Option to set chapter mark when clip is played
 - **Duck Soundboard:** Reduce soundboard volume to level configured in the soundboard, to talk over
   - Mode: Toggle or Push to duck
 

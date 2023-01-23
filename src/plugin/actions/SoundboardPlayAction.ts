@@ -33,6 +33,7 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
             playerPos: nextPlayer,
             startType: "play",
             stopType: "stop",
+            setChapterMark: false,
         }
     }
 
@@ -54,15 +55,25 @@ export class SoundboardPlayAction extends OscAction<Settings, State> {
     private onOscPlayerTitle(instance: Instance, playerPos: number, lowerCaseTitle: string) {
         if (instance.settings.playerTitle?.toLowerCase() === lowerCaseTitle) {
             console.log(`Changed position for player with title '${lowerCaseTitle}' from ${instance.settings.playerPos} to ${playerPos}`)
-            this.onDidReceiveSettings(instance, {...instance.settings, playerPos}, instance.settings)
+            const newSettings = {...instance.settings, playerPos}
+            instance.setSettings(newSettings)
+            this.onDidReceiveSettings(instance, newSettings, instance.settings)
         }
     }
 
     protected onKeyDown(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
         super.onKeyDown(instance, payload)
 
+        const sendMarker = () => this.osc.send("/action/_Ultraschall_Set_Marker")
         const sendCommand = (command: "play" | "pause" | "stop" | "fadein" | "fadeout", arg = 1) => {
             this.osc.send(`/ultraschall/soundboard/player/${instance.settings.playerPos}/${command}`, arg)
+            if (instance.settings.setChapterMark && (command === "play" || command === "fadein")) {
+                // we need a delay here because otherwise one of the following happens:
+                // 1. If we send the play command followed immediately by the set-marker command only the latter is
+                //    executed and clip doesn't play.
+                // 2. If we send the marker command followed by the play command, reaper crashes
+                setTimeout(sendMarker, 10)
+            }
         }
 
         switch (this.action(instance.state, instance.settings)) {
