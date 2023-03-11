@@ -2,6 +2,7 @@ import * as path from "path"
 import * as webpack from "webpack"
 import CopyPlugin from "copy-webpack-plugin"
 import MakeExecutablePlugin from "./webpack/make-executable-webpack-plugin"
+import { PkgPlugin, target } from "./webpack/pkg-webpack-plugin"
 import StreamdeckDistributionToolPlugin from "./webpack/streamdeck-distribution-tool-webpack-plugin"
 import nodeExternals from "webpack-node-externals"
 
@@ -9,6 +10,7 @@ const isProduction = process.env.NODE_ENV == "production"
 const distDir = path.resolve(__dirname, "dist")
 const pluginId = "de.sven-wiegand.ultraschall"
 const outputDir = path.resolve(distDir, `${pluginId}.sdPlugin`)
+const nodeVersion = "node18"
 
 const pluginConfig: webpack.Configuration = {
     entry: "./src/plugin/plugin.ts",
@@ -23,6 +25,16 @@ const pluginConfig: webpack.Configuration = {
                 { from: "assets", to: "[path][name][ext]" }
             ]
         }),
+        new PkgPlugin({
+            input: path.resolve(outputDir, "plugin.js"),
+            targets: [
+                target(nodeVersion, "macos", "arm64"),
+                target(nodeVersion, "macos", "x64"),
+                target(nodeVersion, "win", "x64"),
+            ],
+            distDir: outputDir,
+            enable: isProduction
+        }),
         new MakeExecutablePlugin({
             files: [path.resolve(outputDir, "mac", "streamdeck-ultraschall.sh")],
         }),
@@ -32,7 +44,7 @@ const pluginConfig: webpack.Configuration = {
             enable: isProduction
         })
     ],
-    externals: isProduction ? [] : [nodeExternals()],
+    externals: nodeExternals(),
     module: {
         rules: [
             {

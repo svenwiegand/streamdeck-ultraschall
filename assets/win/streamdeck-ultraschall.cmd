@@ -1,2 +1,2 @@
 @echo off
-win\node.exe plugin.js %* > log.txt 2>&1
+plugin-win-x64.exe %* > log.txt 2>&1
