@@ -37,7 +37,7 @@ export class MarkerAction extends OscAction<Settings> {
     protected onKeyDown(instance: Instance, payload: KeyEvent<Settings>["payload"]) {
         super.onKeyDown(instance, payload)
         const setMarker = (markerName: string) => {
-            this.osc.send(`/action/_Ultraschall_Set_${markerName}`)
+            this.osc.send(`/action/_Ultraschall_Set_${markerName}_Play`)
             instance.showOk()
         }
         switch (instance.settings.markerType) {
